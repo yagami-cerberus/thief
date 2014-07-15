@@ -1,0 +1,23 @@
+{% extends 'foundation.html' %}
+{% block title %}Hello!{% endblock title %}
+{% block main %}
+<h3>產品清單</h3>
+<hr />
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th style="width: 30px"></th>
+      <th>名稱</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in products %}
+      <tr>
+        <td><input type="checkbox" name="product" value="{{ p.id }}" /></td>
+        <td>{{ p.title }}</td>
+        <td><a href="{% url 'product' p.id %}">詳細</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

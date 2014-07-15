@@ -1,0 +1,50 @@
+<!DOCTYPE html lang="{{ request.LANGUAGE_CODE }}">
+<html><head>
+<meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" name="viewport">
+<title>{% block title %}Welcome{% endblock title %}</title>
+{% block default_js %}{% comment %} Default javascripts {% endcomment %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="//ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+{% endblock default_js %}{% block default_style %}
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+{% endblock default_style %}{% block custom_header %}{% endblock custom_header %}
+</head>
+<body>
+  <div class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'home' %}">Product Manage System</a>
+      </div>
+      <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'search' %}">網路產品搜尋</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <strong>賣場代號管理</strong>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="{% url 'auction_types' 'yahoo' %}">雅虎拍賣</a></li>
+                    <li><a href="{% url 'auction_types' 'ruten' %}">露天拍賣</a></li>
+
+                </ul>
+            </li>
+          </ul>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    {% block main %}{% endblock main %}
+  </div>
+  {% block footer %}{% endblock footer %}
+</body>
+</html>

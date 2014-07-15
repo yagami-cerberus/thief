@@ -1,0 +1,17 @@
+{% extends 'foundation.html' %}
+{% load bootstrap3 %}
+{% block title %}編輯 {{ cls.brand }} 類別代號{% endblock title %}
+{% block main %}
+<h3>編輯 {{ cls.brand }} 類別代號</h3>
+<hr />
+<div class="container">
+  <form action="" method="post" role="form">{% csrf_token %}
+    {{ form|bootstrap_form:"default" }}
+  
+    <div class="form-actions text-align-right">
+      <input type="submit" name="login" class="btn btn-primary" value="儲存"></input>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

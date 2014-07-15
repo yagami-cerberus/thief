@@ -1,0 +1,88 @@
+{% extends 'foundation.html' %}
+{% block title %}產品: {{ p.title }} {% endblock title %}
+{% block main %}
+<style>
+.image-cell {
+  width: 170px;
+  height: 190px;
+  display: inline-block;
+}
+
+.image-cell input {
+  float: left;
+}
+.image-cell label {
+  padding-left: 3px;
+  font-size: small;
+  width: 145px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.image-cell.image-add-cell.checked label{
+  background-color: #aaaaff;
+}
+
+.image-cell.image-remove-cell.checked label{
+  background-color: #ff9999;
+}
+
+</style>
+
+<h3>產品: {{ p.title }}</h3>
+<hr />
+<form action="" method="post" role="form" enctype="multipart/form-data">{% csrf_token %}
+  <div class="container">
+    <h4>現有圖片</h4>
+    <div class="container">
+      {% for image in p.productimage_set.all %}
+      <div class="image-cell image-remove-cell">
+        <img src="{% url 'product_image' image.id %}" class="img-thumbnail" />
+        <div>
+          <input type="checkbox" id="current_img_{{ forloop.counter }}" name="delete" value="{{ image.id }}" />
+          <label for="current_img_{{ forloop.counter }}" alt="{{ image.title }}">刪除</label>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <hr />
+  <div class="container">
+    <h4>新增圖片</h4>
+    <div class="container">
+      {% for image in gis %}
+      <div class="image-cell image-add-cell">
+        <a href="{{ image.url }}" target="_blank"><img src="{{ image.thumb_url }}" class="img-thumbnail" /></a>
+        <div>
+          <input type="checkbox" id="images_{{ forloop.counter }}" name="images" value="{{ image.url }}" />
+          <label for="images_{{ forloop.counter }}" alt="{{ image.title }}">{{ image.title }}</label>
+        </div>
+      </div>
+      {% endfor %}
+      <hr />
+        <label>手動上傳圖片</label>
+        <input type="file" name="files" multiple="" accept="image/*" >
+      <hr />
+      <div class"row">
+        <div class="text-right">
+          <button class="btn btn-primary">儲存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script type="text/javascript">
+$(function() {
+  $(".image-cell input[type=checkbox]").bind("change", function() {
+    var $target = $(this).closest(".image-cell");
+    if(this.checked) {
+      $target.addClass("checked")
+    } else {
+      $target.removeClass("checked")
+    }
+  });
+});
+</script>
+{% endblock %}

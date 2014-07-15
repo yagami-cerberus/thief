@@ -1,0 +1,39 @@
+{% extends 'foundation.html' %}
+{% block title %}{{ cls.brand }} 類別代號管理{% endblock title %}
+{% block main %}
+<h3>{{ cls.brand }} 類別代號管理</h3>
+<hr />
+<div class="container">
+  <div class="row text-right">
+    <a href="{% url 'create_auction_type' type %}" class="btn btn-success">新增</a>
+  </div>
+  <table class="table table-condensed">
+    <thead>
+      <tr><th>代碼</th><th>名稱</th><th style="width: 150px"></th></tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr>
+          <td>{{ item.no }}</td><td>{{ item.title }}</td><td>
+            <a href="{% url 'edit_auction_type' type item.id %}">編輯</a> |
+            <a href="javascript:delete_record({{ item.id }})">刪除</a>
+          </td>
+        </tr>
+      {% endfor %}
+    <tbody>
+  </table>
+</div>
+<form action="{% url 'delete_auction_type' type %}" method="POST" style="display: none" id="delete_form">
+  {% csrf_token %}
+  <input name="id" />
+</form>
+<script type="text/javascript">
+function delete_record(id) {
+  if(confirm("您確定要刪除此筆記錄?")) {
+    $form = $("#delete_form");
+    $("[name=id]", $form).val(id);
+    $form.submit();
+  }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% load bootstrap3 %}
+
+{% for field in form %}
+  {% if field.is_hidden %}
+    <div style="display: none;">{{ field }}</div>
+  {% else %}
+    <div class="form-group{% if field.errors %} has-error{% endif %}">
+      <label for="{{ field.id_for_label }}">
+        {{ field.label }}
+        {% if field.errors %}
+        <span class="field-errors">
+          ＊{{ field.errors|join:"、" }}
+        </span>
+        {% endif %}
+      </label>
+      {{ field|bootstrap_field }}
+    </div>
+  {% endif %}
+{% endfor %}
