@@ -1,0 +1,68 @@
+<div class="container">
+  <div class="text-right">
+    <div class="btn-group products_fn">
+      <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+          下載
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:{}" data-url="{% url 'download_products_csv' 'yahoo' %}">Yahoo</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:{}" data-url="{% url 'download_products_csv' 'ruten' %}">露天拍賣</a></li>
+        </ul>
+      </div>
+      <div class="btn btn-danger" data-url="{% url 'products' %}" data-confirm="您確定要刪除選擇的產品？這個動作將無法復原。" data-method="delete">
+        刪除
+      </div>
+    </div>
+  </div>
+</div>
+<form id="products_form" role="form" action="" method='get'>{% csrf_token %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th style="width: 30px"></th>
+        <th>品名</th>
+        <th>關鍵字</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+        <tr>
+          <td><input type="checkbox" id="p_{{ p.id }}" name="p" value="{{ p.id }}" /></td>
+          <td><label for="p_{{ p.id }}">{{ p.title }}</label></td>
+          <td>{{ p.keywords }}</td>
+          <td><a href="{% url 'product' p.id %}">詳細</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</form>
+<script type="text/javascript">
+$(function() {
+  $("[data-url]", ".products_fn").bind("click", function() {
+    var $f = $("#products_form");
+    var $self = $(this);
+    var confirm_msg = $self.attr("data-confirm");
+    if($("[name=p]:checked", $f).length == 0) {
+      alert("您沒有選擇任何產品");
+      return;
+    }
+    if(confirm_msg && !confirm(confirm_msg))
+      return;
+    
+    var action = $self.attr("data-url");
+    var method = $self.attr("data-method");
+    
+    $f.attr("action", action);
+    if(method && method != 'GET') {
+      $f.attr("method", "post")
+      $("<input type=\"hidden\" name=\"__method__\" />")
+        .val(method)
+        .appendTo($f);
+    };
+    $f.submit();
+  });
+});
+</script>

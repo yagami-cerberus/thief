@@ -1,0 +1,7 @@
+{% extends 'foundation.html' %}
+{% block title %}Hello!{% endblock title %}
+{% block main %}
+<h3>產品清單</h3>
+<hr />
+{% include 'products/_products.html' with products=products %}
+{% endblock %}

@@ -28,22 +28,13 @@
 <h3>產品: {{ p.title }}</h3>
 <hr />
 <div class="container">
-  <h4>基本資料</h4>
-  {% include 'products/_vendor_entry.html' with product=p %}
-</div>
-<hr />
-<div class="container">
   <h4>
     <div class="pull-right pull-right-buttons">
-      <a href="{% url 'edit_product_meta' p.id %}" class="btn btn-sm btn-primary">編輯</a>
+      <a href="{% url 'edit_product' p.id %}" class="btn btn-sm btn-primary">編輯</a>
     </div>
-    拍賣場資料
+    基本資料
   </h4>
-  {% if p.productmeta %}
-    {% include 'products/_meta_entry.html' with meta=p.productmeta %}
-  {% else %}
-    <div class="container">沒有資料</div>
-  {% endif %}
+  {% include 'products/_product.html' with product=p %}
 </div>
 <hr />
 <div class="container">

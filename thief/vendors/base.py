@@ -40,6 +40,7 @@ class ProductOverview(object):
         self.release_date = kw.get('release_date')
         self.weight = kw.get('weight')
         self.size = kw.get('size')
+        self.manufacturer = kw.get('manufacturer')
     
     def to_dict(self):
         data = {'vendor': self.vendor, 'item_id': self.item_id, 'title': self.title}
@@ -51,11 +52,16 @@ class ProductOverview(object):
         if self.release_date: data['release_date'] = self.release_date
         if self.weight: data['weight'] = self.weight
         if self.size: data['size'] = self.size
+        if self.manufacturer: data['manufacturer'] = self.manufacturer
         
         return data
     
     @classmethod
     def from_dict(cls, doc):
+        if 'vendor' not in doc: doc['vendor'] = ''
+        if 'item_id' not in doc: doc['item_id'] = ''
+        if 'title' not in doc: doc['title'] = ''
+        
         return cls(**doc)
         
     def __repr__(self):

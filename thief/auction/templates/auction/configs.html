@@ -1,0 +1,37 @@
+{% extends 'foundation.html' %}
+{% block title %}賣場通用設定管理{% endblock title %}
+{% block main %}
+<h3>賣場通用設定管理</h3>
+<hr />
+<div class="container">
+  <div class="text-right">
+    <a class="btn btn-primary" href="{% url 'edit_auction_configs' %}">編輯</a>
+  </div>
+</div>
+<div class="container">
+  <table class="table table-condensed">
+    <thead>
+      <tr><th>項目</th><th>設定值</th></tr>
+    </thead>
+    <tbody>
+      {% for f in form %}
+        <tr>
+          <td>{{ f.label }}</td><td class="_post_modify">{{ f.value|default_if_none:"" }}</td>
+        </tr>
+      {% endfor %}
+    <tbody>
+  </table>
+</div>
+<script>
+$(function() {
+  var $items = $("._post_modify");
+  for(var i=0;i<$items.length;i++) {
+    var $item = $($items[i]);
+    var val = $item.text().replace(/ /g,'');
+    if(val=="True") $item.text("是");
+    else if(val=="False") $item.text("否");
+    else if(val=="None") $item.text("");
+  }
+});
+</script>
+{% endblock %}

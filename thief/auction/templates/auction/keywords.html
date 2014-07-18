@@ -1,0 +1,42 @@
+{% extends 'foundation.html' %}
+{% block title %}賣場關鍵字管理{% endblock title %}
+{% block main %}
+<h3>賣場關鍵字管理</h3>
+<hr />
+<div class="container">
+  <form role="form" class="form-inline" method="post">{% csrf_token %}
+    <div class="form-group">
+      <label class="sr-only" for="k">關鍵字</label>
+      <input type="text" name="k" class="form-control input-sm" placeholder="新增關鍵字">
+    </div>
+    <button class="btn btn-success btn-sm" type="submit">新增</button>
+  </form>
+</div>
+<div class="container">
+  <table class="table table-condensed">
+    <thead>
+      <tr><th>關鍵字</th><th style="width: 150px"></th></tr>
+    </thead>
+    <tbody>
+      {% for k in keywords %}
+        <tr>
+          <td>{{ k.keyword }}</td><td><a href="javascript:$.delete_keyword({{ k.pk }})">刪除</a></td>
+        </tr>
+      {% endfor %}
+    <tbody>
+  </table>
+</div>
+<form method="post" style="display: none" id="delete_form">{% csrf_token %}
+  <input type="hidden" name="pk" value="" />
+  <input type="hidden" name="__method__" value="delete" />
+</form>
+<script type="text/javascript">
+$.delete_keyword = function(pk) {
+  if(confirm("確定要刪除此關鍵字?")) {
+    var $f = $("#delete_form");
+    $("[name=pk]", $f).val(pk);
+    $f.submit();
+  }
+}
+</script>
+{% endblock %}

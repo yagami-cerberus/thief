@@ -11,7 +11,7 @@ input#keyword {
 <div class="container body-content">
   <div class="row form-inline" role="form">
     <div class="col-sm-6 form-group">
-      <input type="text" class="form-control" id="keyword" name="keyword" placeholder="請輸入產品關鍵字" value="なのは" />
+      <input type="text" class="form-control" id="keyword" name="keyword" placeholder="請輸入產品關鍵字" value="" />
       <button class="btn btn-primary" data-role="search-btn">搜尋</button>
     </div>
   </div>
@@ -31,22 +31,34 @@ input#keyword {
 
 <script id='tmpl-query-row' type="text/jquery-tmpl">
   <tr>
-    <td>${vendor}</td><td>${item_id}</td><td>
-      {% templatetag openvariable %}if url}}
-        <a href="${url}" target="_blank">${title}</a>
+    <td>${item.vendor}</td><td>${item.item_id}</td><td>
+      <div>
+      {% templatetag openvariable %}if item.url}}
+        <a href="${item.url}" target="_blank">${item.title}</a>
       {% templatetag openvariable %}else}}
-        ${title}
+        ${item.title}
       {% templatetag openvariable %}/if}}
+      </div>
+      <div>
+        條碼: ${item.ean} / 價格: ${item.currency} ${item.price} / 發售日: ${item.release_date} / 尺寸: ${item.size} / 重量: ${item.weight}
+      </div>
     </td>
     <td>
-      <a href="{% url 'create_product' %}?vendor=${vendor}&item_id=${item_id}&keyword=${keyword}">加入</a>
+      <form action="{% url 'products' %}" method="post">{% csrf_token %}
+        {% templatetag openvariable %}each(prop, val) item}}
+        <input type="hidden" name="${prop}" value="${val}" />
+        {% templatetag openvariable %}/each}}
+        <button class="btn btn-sm btn-default">加入</button>
+      </form>
     </td>
   </tr>
 </script>
 
 <script type="text/javascript">
 $(function() {
-  var xhr_job = undefined;
+  var aws_xhr_job = undefined;
+  var rakuten_xhr_job = undefined;
+
   var query_url = '{% url 'query_vendor' 'json' %}';
   
   var search_cache = {};
@@ -78,27 +90,48 @@ $(function() {
   });
   
   $searcher.bind("update", function(e, keyword) {
-    if(xhr_job){
-      xhr_job.abort();
-    }
-      
-    xhr_job = $.ajax(query_url, {
+    if(aws_xhr_job) aws_xhr_job.abort();
+    if(rakuten_xhr_job) rakuten_xhr_job.abort();
+
+    $searcher.children().remove();
+    
+    aws_xhr_job = $.ajax(query_url, {
       data: {vendor_name: 'amazon_jp', keyword: keyword},
       dataType: 'json',
       type: 'GET',
       success: function(data) {
-        xhr_job = undefined;
+        aws_xhr_job = undefined;
         
         if(data.status) {
           for(var i=0;i<data.results.length;i++) {
             var row = data.results[i];
             row['keyword'] = keyword
-            var $row = $query_tmpl.tmpl(row);
+            var $row = $query_tmpl.tmpl({item: row});
             $row.appendTo($searcher);
           }
         }
       }
     });
+
+    rakuten_xhr_job = $.ajax(query_url, {
+      data: {vendor_name: 'rakuten', keyword: keyword},
+      dataType: 'json',
+      type: 'GET',
+      success: function(data) {
+        rakuten_xhr_job = undefined;
+        
+        if(data.status) {
+          for(var i=0;i<data.results.length;i++) {
+            var row = data.results[i];
+            row['keyword'] = keyword
+            var $row = $query_tmpl.tmpl({item: row});
+            $row.appendTo($searcher);
+          }
+        }
+      }
+    });
+
+
   });
 });
 </script>

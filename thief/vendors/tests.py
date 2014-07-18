@@ -7,5 +7,3 @@ class AmazonJP_Test(TestCase):
     def test_search(self):
         amazon = AmazonJP()
         results = amazon.search("Nanoha")
-        import IPython
-        IPython.embed()

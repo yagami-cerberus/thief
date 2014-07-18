@@ -26,16 +26,28 @@
       </div>
       <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="{% url 'search' %}">網路產品搜尋</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <strong>建立產品資料</strong>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'search' %}">網路產品搜尋</a></li>
+                  <li><a href="{% url 'upload_products_csv' %}">上傳 CSV</a></li>
+                </ul>
+            </li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <strong>賣場代號管理</strong>
                     <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
+                    <li role="presentation" class="dropdown-header">賣場代號管理</li>
                     <li><a href="{% url 'auction_types' 'yahoo' %}">雅虎拍賣</a></li>
                     <li><a href="{% url 'auction_types' 'ruten' %}">露天拍賣</a></li>
-
+                    <li class="divider"></li>
+                    <li><a href="{% url 'auction_configs' %}">通用設定管理</a></li>
+                    <li><a href="{% url 'auction_keywords' %}">關鍵字管理</a></li>
                 </ul>
             </li>
           </ul>

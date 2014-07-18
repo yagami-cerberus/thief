@@ -1,0 +1,47 @@
+{% extends 'foundation.html' %}
+{% block title %}上傳拍賣場 CSV{% endblock title %}
+{% block main %}
+<h3>上傳拍買場 CSV</h3>
+<hr />
+{% if upload_success %}
+<div class="alert alert-success" role="alert">成功上傳資料於 {{ last_upload }}</div>
+{% endif %}
+<div class="container">
+  <form method="post" class="form-horizontal" enctype="multipart/form-data" role="form">{% csrf_token %}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">CSV 類別</label>
+      <div class="col-sm-10">
+        <div class="checkbox">
+          <label><input type="radio" name="auction_type" value="yahoo" checked> 雅虎拍賣</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-10 col-sm-offset-2">
+        <div class="checkbox">
+          <label><input type="radio" name="auction_type" value="ruten"> 露天拍賣</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">上傳檔案</label>
+      <div class="col-sm-10">
+        <div class="checkbox">
+          <input type="file" name="csv_file" />
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-10 col-sm-offset-2">
+        <button class="btn btn-primary">上傳</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% if last_upload_products %}
+<hr />
+<h4>最後上傳成功資料</h4>
+<hr />
+{% include 'products/_products.html' with products=last_upload_products %}
+{% endif %}
+{% endblock %}

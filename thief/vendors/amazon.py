@@ -62,7 +62,11 @@ def get_size(r):
     w = r.ItemAttributes.PackageDimensions.Width.text
     u = r.ItemAttributes.PackageDimensions.Height.get('Units')
     return h + 'x' + l + 'x' + w + ' ' + u
-    
+
+@ignore_attribute_error
+def get_manufacturer(r):
+    return r.ItemAttributes.Manufacturer
+
 class Amazon(VendorBase):
     vendor_name = "amazon"
     

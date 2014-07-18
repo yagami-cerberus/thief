@@ -1,7 +1,7 @@
 
 import json
 from django.shortcuts import render_to_response
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, StreamingHttpResponse, Http404
 from django.template import RequestContext
 from django.conf import settings
 
@@ -40,7 +40,7 @@ class ThiefREST(object):
             
         assert response != None, "where is the response?"
         
-        if isinstance(response, HttpResponse):
+        if isinstance(response, (HttpResponse, StreamingHttpResponse)):
             return response
         else:
             assert self.template, 'No template specific for REST'
@@ -69,10 +69,10 @@ class ThiefRestAPI(ThiefREST):
             if request.method == 'GET':
                 response = self.get(request, **kw)
             elif request.method == 'POST':
-                a = request.POST.get('__action__')
-                if a == 'PUT':
+                alt_method = request.POST.get('__method__')
+                if alt_method == 'put':
                     response = self.put(request, **kw)
-                elif a == 'DELETE':
+                elif alt_method == 'delete':
                     response = self.delete(request, **kw)
                 else:
                     response = self.post(request, **kw)
@@ -96,7 +96,6 @@ class RestException(Exception):
         self.status_code = status_code
         self.response = response
         Exception.__init__(self, status_code, response)
-
 
 class Rest404Error(RestException):
     def __init__(self, status_code=404, response={"error": "not found"}):
