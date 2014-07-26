@@ -36,7 +36,7 @@ class ProductOverview(object):
         self.url = kw.get('url')
         self.currency = kw.get('currency')
         self.price = kw.get('price')
-        self.ean = kw.get('ean')
+        self.jan = kw.get('jan')
         self.release_date = kw.get('release_date')
         self.weight = kw.get('weight')
         self.size = kw.get('size')
@@ -48,7 +48,7 @@ class ProductOverview(object):
         if self.url: data['url'] = self.url
         if self.currency: data['currency'] = self.currency
         if self.price: data['price'] = self.price
-        if self.ean: data['ean'] = self.ean
+        if self.jan: data['jan'] = self.jan
         if self.release_date: data['release_date'] = self.release_date
         if self.weight: data['weight'] = self.weight
         if self.size: data['size'] = self.size

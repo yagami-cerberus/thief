@@ -1,5 +1,9 @@
+from tempfile import NamedTemporaryFile
+from django.core.files import File
 from django.db import models
 from os import path
+import urlparse
+import urllib2
 
 from thief.auction.models import YahooProductNo, RutenProductNo
 
@@ -12,7 +16,7 @@ class Product(models.Model):
     
     title = models.CharField('\xe5\x93\x81\xe5\x90\x8d', max_length=1024, null=False)
     
-    ean = models.CharField('\xe6\xa2\x9d\xe7\xa2\xbc', max_length=255, null=True)
+    jan = models.CharField('JAN\xe6\xa2\x9d\xe7\xa2\xbc', max_length=255, null=True)
     release_date = models.CharField('\xe7\x99\xbc\xe5\x94\xae\xe6\x97\xa5', max_length=255, null=True)
     weight = models.CharField('\xe9\x87\x8d\xe9\x87\x8f', max_length=255, null=True)
     size = models.CharField('\xe5\xb0\xba\xe5\xaf\xb8', max_length=255, null=True)
@@ -41,6 +45,30 @@ class Product(models.Model):
         p.save()
         return p
         
+    def fetch_image_from_url(self, url):
+        if not (url.startswith('http://') or url.startswith('https://')):
+            return
+        
+        request = urllib2.Request(url, headers={
+            "Referer": "https://www.google.com.tw/search", 
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36"})
+            
+        response = urllib2.urlopen(request)
+        filename = response.headers.get('Content-Disposition')
+        
+        img_temp = NamedTemporaryFile(delete=True)
+        img_temp.write(response.read())
+        img_temp.flush()
+        
+        if not filename:
+            filename = urlparse.urlsplit(url)[2].split("/")[-1]
+        
+        pi = ProductImage(product=self)
+        pi.image.save(filename, File(img_temp))
+        pi.save()
+        
+        return pi
+        
     def export(self):
         data = {
             'title': self.title,
@@ -57,7 +85,7 @@ class Product(models.Model):
         }
 
         attach_counter = 1
-        attach_name = self.ean or ("_%s" % self.pk)
+        attach_name = self.jan or ("_%s" % self.pk)
         attach_files = []
         for img in self.productimage_set.order_by("pk"):
             if not path.isfile(img.image.path): continue

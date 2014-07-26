@@ -38,10 +38,6 @@ def get_price(r):
         return r.OfferSummary.LowestNewPrice.Amount.text
 
 @ignore_attribute_error
-def get_ean(r):
-    return r.ItemAttributes.EAN.text
-
-@ignore_attribute_error
 def get_manufacturer(r):
     return r.ItemAttributes.Manufacturer.text
     
@@ -51,17 +47,36 @@ def get_release_date(r):
 
 @ignore_attribute_error
 def get_weight(r):
-    w = r.ItemAttributes.PackageDimensions.Weight.text
-    u = r.ItemAttributes.PackageDimensions.Weight.get('Units')
-    return w + ' ' + u
+    tw = r.ItemAttributes.PackageDimensions.Weight.text
+    tu = r.ItemAttributes.PackageDimensions.Weight.get('Units')
+    
+    if tu == 'hundredths-pounds':
+        try:
+            w = float(tw) * 0.0045359237
+            if w < 0.9:
+                return "%.1f g" % (w * 1000)
+            else:
+                return "%.2f kg" % w
+        except ValueError:
+            pass
+    
+    return '%s %s' % (tw, tu)
 
 @ignore_attribute_error
 def get_size(r):
-    h = r.ItemAttributes.PackageDimensions.Height.text
-    l = r.ItemAttributes.PackageDimensions.Length.text
-    w = r.ItemAttributes.PackageDimensions.Width.text
-    u = r.ItemAttributes.PackageDimensions.Height.get('Units')
-    return h + 'x' + l + 'x' + w + ' ' + u
+    th = r.ItemAttributes.PackageDimensions.Height.text
+    tl = r.ItemAttributes.PackageDimensions.Length.text
+    tw = r.ItemAttributes.PackageDimensions.Width.text
+    tu = r.ItemAttributes.PackageDimensions.Height.get('Units')
+    
+    if tu == 'hundredths-inches':
+        try:
+            h, l, w = float(th), float(tl), float(tw)
+            return '%.1fx%.1fx%.1f cm' % (h * 0.0254, l * 0.0254, w * 0.0254)
+        except ValueError:
+            pass
+    
+    return '%sx%sx%s %s' % (th, tl, tw, tu)
 
 @ignore_attribute_error
 def get_manufacturer(r):
@@ -84,7 +99,6 @@ class Amazon(VendorBase):
             url=get_url(r),
             currency=get_currency(r),
             price=get_price(r),
-            ean=get_ean(r),
             release_date=get_release_date(r),
             weight=get_weight(r),
             size=get_size(r)

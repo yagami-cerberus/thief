@@ -1,4 +1,5 @@
 from tempfile import NamedTemporaryFile
+import mimetypes
 import logging
 import zipfile
 import os
@@ -9,9 +10,6 @@ from django.http import HttpResponse, StreamingHttpResponse
 from django.core.files import File
 from django.contrib import messages
 from datetime import datetime
-import mimetypes
-import urlparse
-import urllib2
 
 from thief.products.models import Product, ProductImage
 from thief.products import forms
@@ -35,10 +33,13 @@ class products(ThiefREST):
         v_product = ProductOverview.from_dict({key: request.POST[key] for key in request.POST})
         product = Product(vendor=v_product.vendor, item_id=v_product.item_id,
             title=v_product.title, url=v_product.url, source_price=v_product.price,
-            source_currency=v_product.currency, ean=v_product.ean,
+            source_currency=v_product.currency, jan=v_product.jan,
             release_date=v_product.release_date, weight=v_product.weight,
             size=v_product.size)
         product.save()
+        
+        self.auto_fetch_image(product)
+        
         return redirect(reverse('product', args=(product.id, )))
     
     def delete(self, request):
@@ -53,7 +54,13 @@ class products(ThiefREST):
                     pass
             
         return redirect(reverse('products'))
-
+    
+    def auto_fetch_image(self, product):
+        gis = GoogleImageSearch()
+        is_cache, gis_images = gis.search(product.title)
+        if len(gis_images) > 0:
+            product.fetch_image_from_url(gis_images[0].url)
+        
 class product(ThiefREST):
     template = 'products/product.html'
     
@@ -61,11 +68,6 @@ class product(ThiefREST):
         product = Product.objects.get(id=id)
         return {'p': product}
     
-    def post(self, request):
-        form = forms.Product(request.POST)
-        product = form.save()
-        return redirect(reverse('product', args=(product.id, )))        
-
 class edit_product(ThiefREST):
     template = 'products/edit.html'
     
@@ -88,25 +90,7 @@ class edit_product(ThiefREST):
         
 class edit_image(ThiefREST):
     template = 'products/edit_images.html'
-    
-    def download_image(self, product, url):
-        if not (url.startswith('http://') or url.startswith('https://')):
-            return
             
-        request = urllib2.urlopen(url)
-        filename = request.headers.get('Content-Disposition')
-        
-        img_temp = NamedTemporaryFile(delete=True)
-        img_temp.write(request.read())
-        img_temp.flush()
-        
-        if not filename:
-            filename = urlparse.urlsplit(url)[2].split("/")[-1]
-        
-        pi = ProductImage(product=product)
-        pi.image.save(filename, File(img_temp))
-        pi.save()
-        
     def get(self, request, id):
         product = Product.objects.get(id=id)
         gis = GoogleImageSearch()
@@ -123,7 +107,7 @@ class edit_image(ThiefREST):
         image_delete = request.POST.getlist('delete')
         
         for url in image_urls:
-            self.download_image(product, url)
+            self.fetch_image_from_url(url)
         
         for file in image_uploaded:
             pi = ProductImage(product=product)
