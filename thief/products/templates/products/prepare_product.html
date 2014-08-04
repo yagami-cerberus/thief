@@ -1,0 +1,115 @@
+{% extends 'foundation.html' %}
+{% block title %}產品: {{ p.title }} {% endblock title %}
+{% block main %}
+<style>
+.image_cell {
+  width: 170px;
+  height: 170px;
+  display: inline-block;
+}
+
+.image_cell input {
+  float: left;
+}
+.image_cell label {
+  padding-left: 3px;
+  font-size: small;
+  width: 145px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pull-right-buttons {
+  padding-right: 20px;
+}
+</style>
+
+<h3>產品: {{ p.title }}</h3>
+<hr />
+<div class="container">
+  <h4>基本資料</h4>
+  <div class="form-horizontal" role="form">
+    <div class="form-group">
+      <label class="col-sm-2 control-label">品名</label>
+      <div class="col-sm-10 form-control-static">{{ p.title }}</div>
+    </div>
+    {% if p.vendor %}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">資料來源</label>
+      <div class="col-sm-10 form-control-static">
+        {% if p.url %}<a href="{{ p.url }}">{{ p.vendor|default:"" }}</a>
+        {% else %}{{ p.vendor|default:"" }}{% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <hr />
+  <h4>正在準備資料...</h4>
+  <div class="form-horizontal" role="form">
+    <div class="form-group">
+      <label class="col-sm-2 control-label">第一張產品圖片</label>
+      <div class="col-sm-10 form-control-static" data-role="job-result" data-job="google-img">?</div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">JAN 條碼</label>
+      <div class="col-sm-10 form-control-static" data-role="job-result" data-job="jan">?</div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-10 col-sm-offset-2 form-control-static text-right"><a data-role="job-continue" class="btn btn-warning" href="{% url 'product' p.id %}">跳過</a></div>
+    </div>
+  </div>
+</div>
+
+<form style="display: none;" action="{% url 'prepare_product' p.id %}" data-job="google-img">
+  {% csrf_token %}
+  <input type="hidden" name="job" value="google-img" />
+</form>
+<form style="display: none;" action="{% url 'prepare_product' p.id %}" data-job="jan">
+  {% csrf_token %}
+  <input type="hidden" name="job" value="jan" />
+</form>
+
+<script type="text/javascript">
+$(function() {
+  var jobs = ["google-img", "jan"];
+  var tasks = jobs.length;
+  
+  function close_a_job() {
+    tasks -= 1;
+    
+    if(tasks==0) {
+      $("[data-role=job-continue]")[0].click();
+    }
+  }
+  
+  function handle_a_job(job) {
+    var $form = $("form[data-job=" + job + "]");
+    if(!$form) {
+      $("[data-role=job-result][data-job=" + job + "]").text("無法執行");
+      close_a_job();
+      return;
+    }
+    $("[data-role=job-result][data-job=" + job + "]").text("處理中...");
+    
+    $.ajax($form.attr("action"), {
+      data: $form.serialize(),
+      dataType: 'json',
+      type: 'POST',
+      success: function(result) {
+        $("[data-role=job-result][data-job=" + job + "]").text((result?"OK":"未取得"));
+        close_a_job()
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        $("[data-role=job-result][data-job=" + job + "]").text("Error");
+        close_a_job()
+      }
+    });
+  }
+  
+  for(var i=0;i<jobs.length;i++) {
+    handle_a_job(jobs[i]);
+  }
+});
+</script>
+{% endblock %}
