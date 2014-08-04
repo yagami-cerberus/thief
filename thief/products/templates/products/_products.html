@@ -32,7 +32,7 @@
         <tr>
           <td><input type="checkbox" id="p_{{ p.id }}" name="p" value="{{ p.id }}" /></td>
           <td><label for="p_{{ p.id }}">{{ p.title }}</label></td>
-          <td>{{ p.keywords }}</td>
+          <td>{{ p.keywords|default:"" }}</td>
           <td><a href="{% url 'product' p.id %}">詳細</a></td>
         </tr>
       {% endfor %}

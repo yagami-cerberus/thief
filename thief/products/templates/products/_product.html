@@ -6,26 +6,33 @@
   {% if product.vendor %}
   <div class="form-group">
     <label class="col-sm-2 control-label">資料來源</label>
-    <div class="col-sm-10 form-control-static">{{ product.vendor }}</div>
+    <div class="col-sm-10 form-control-static">
+      {% if product.url %}<a href="{{ product.url }}">{{ product.vendor|default:"" }}</a>
+      {% else %}{{ product.vendor|default:"" }}{% endif %}
+    </div>
   </div>
   {% endif %}
   {% if product.source_price %}
   <div class="form-group">
     <label class="col-sm-2 control-label">來源價格</label>
-    <div class="col-sm-10 form-control-static">{{ product.source_currency }} {{ product.source_price }}</div>
+    <div class="col-sm-10 form-control-static">{{ product.source_currency|default:"" }} {{ product.source_price|default:"" }}</div>
   </div>
   {% endif %}
   <div class="form-group">
     <label class="col-sm-2 control-label">條碼</label>
-    <div class="col-sm-10 form-control-static">{{ product.ean }}</div>
+    <div class="col-sm-10 form-control-static">{{ product.jan|default:"" }}</div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">發售日</label>
-    <div class="col-sm-10 form-control-static">{{ product.release_date  }}</div>
+    <div class="col-sm-10 form-control-static">{{ product.release_date|default:"" }}</div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">尺寸/重量</label>
-    <div class="col-sm-10 form-control-static">{{ product.size}} / {{ product.weight }}</div>
+    <label class="col-sm-2 control-label">尺寸</label>
+    <div class="col-sm-10 form-control-static">{{ product.size|default:"" }}</div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">重量</label>
+    <div class="col-sm-10 form-control-static">{{ product.weight|default:"" }}</div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">拍賣場分類</label>
@@ -36,30 +43,30 @@
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">關鍵字</label>
-    <div class="col-sm-10 form-control-static">{{ product.keywords }}</div>
+    <div class="col-sm-10 form-control-static">{{ product.keywords|default:"" }}</div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">簡介</label>
-    <div class="col-sm-10 form-control-static">{{ product.summary }}</div>
+    <div class="col-sm-10 form-control-static">{{ product.summary|default:"" }}</div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">價格</label>
-    <div class="col-sm-10 form-control-static">{{ product.price }}</div>
+    <div class="col-sm-10 form-control-static">{{ product.price|default:"" }}</div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">數量</label>
-    <div class="col-sm-10 form-control-static">{{ product.amount }}</div>
+    <div class="col-sm-10 form-control-static">{{ product.amount|default:"" }}</div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">顏色</label>
-    <div class="col-sm-10 form-control-static">{{ product.color }}</div>
+    <div class="col-sm-10 form-control-static">{{ product.color|default:"" }}</div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">產品說明</label>
-    <div class="col-sm-10 form-control-static">{{ product.details }}</div>
+    <div class="col-sm-10 form-control-static">{{ product.details|default:"" }}</div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">物品新舊</label>
-    <div class="col-sm-10 form-control-static">{{ product.usage_status }}</div>
+    <div class="col-sm-10 form-control-static">{{ product.usage_status|default:"" }}</div>
   </div>
 </div>
