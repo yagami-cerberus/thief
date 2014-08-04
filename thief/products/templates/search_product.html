@@ -13,10 +13,12 @@ input#keyword {
     <div class="col-sm-6 form-group">
       <input type="text" class="form-control" id="keyword" name="keyword" placeholder="請輸入產品關鍵字" value="" />
       <button class="btn btn-primary" data-role="search-btn">搜尋</button>
+      <label><input type="checkbox" data-role="good-luck-checkbox"/> 簡易搜索</label>
     </div>
   </div>
   <hr />
-  <table class="table table-condensed" style="font-size: small">
+  <table class="table table-condensed" style="font-size: small;
+  ">
     <thead>
       <tr>
         <th style="width: 120px">來源</th>
@@ -29,6 +31,13 @@ input#keyword {
   </table>
 </div>
 
+<script id='tmpl-create-product-form' type="text/jquery-tmpl">
+  <form action="{% url 'products' %}" method="post" style="display: none">{% csrf_token %}
+    {% templatetag openvariable %}each(prop, val) item}}
+    <input type="hidden" name="${prop}" value="${val}" />
+    {% templatetag openvariable %}/each}}
+  </form>
+</script>
 <script id='tmpl-query-row' type="text/jquery-tmpl">
   <tr>
     <td>${item.vendor}</td><td>${item.item_id}</td><td>
@@ -55,18 +64,53 @@ input#keyword {
 </script>
 
 <script type="text/javascript">
-$(function() {
-  var aws_xhr_job = undefined;
-  var rakuten_xhr_job = undefined;
 
-  var query_url = '{% url 'query_vendor' 'json' %}';
+function VenderSearchEngine(queryURL) {
+  var XHR_JOBS = {};
   
-  var search_cache = {};
+  this.search = function(vendor, keyword, callback) {
+    var xhr = $.ajax(queryURL, {
+      data: {vendor_name: vendor, keyword: keyword},
+      dataType: 'json',
+      type: 'GET',
+      success: function(data) {
+        delete XHR_JOBS[vendor];
+        if(data.status) {
+          callback(keyword, data.results);
+        } else {
+          alert("Error");
+        }
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        delete XHR_JOBS[vendor];
+        
+        alert(errorThrown);
+      }
+    });
+    
+    XHR_JOBS[vendor] = xhr;
+  }
   
+  this.abort = function() {
+    for(key in XHR_JOBS) {
+      var xhr = XHR_JOBS[key];
+      delete XHR_JOBS[key];
+      try {
+        xhr.abort()
+      } catch(e) {}
+    }
+  }
+}
+
+$(function() {
+  var vendorHelper = new VenderSearchEngine('{% url 'query_vendor' 'json' %}');
+
   var $keyword = $("input#keyword");
   var $submit = $("[data-role=search-btn]");
-  var $searcher = $(".search_result");
+  var $search_results = $(".search_result");
+  
   var $query_tmpl = $("#tmpl-query-row");
+  var $post_create_tmpl = $("#tmpl-create-product-form");
   
   $keyword.bind("keypress", function(e) {
     if(e.keyCode==13) {
@@ -76,63 +120,48 @@ $(function() {
   
   $submit.bind("search-submit", function() {
     var val = $keyword.val();
-    if(val) {
-      if(val.length < 3) {
-        alert("關鍵字太短");
-      } else {
-        $searcher.trigger('update', [val]);
-      }
-    } else {
+    if(!val) {
       alert("請輸入關鍵字");
+    } else if(val.length < 3) {
+      alert("關鍵字太短");
+    } else {
+      var good_luck = $("input[data-role=good-luck-checkbox]:checked").length > 0;
+      vendorHelper.abort();
+      
+      if(good_luck) {
+        vendorHelper.search('rakuten', val, good_luck_callback);
+        
+      } else {
+        $search_results.children().remove();
+        
+        vendorHelper.search('amazon_jp', val, create_results_callback);
+        vendorHelper.search('rakuten', val, create_results_callback);
+      }
     }
   }).bind("click", function() {
     $submit.trigger("search-submit");
   });
   
-  $searcher.bind("update", function(e, keyword) {
-    if(aws_xhr_job) aws_xhr_job.abort();
-    if(rakuten_xhr_job) rakuten_xhr_job.abort();
-
-    $searcher.children().remove();
-    
-    aws_xhr_job = $.ajax(query_url, {
-      data: {vendor_name: 'amazon_jp', keyword: keyword},
-      dataType: 'json',
-      type: 'GET',
-      success: function(data) {
-        aws_xhr_job = undefined;
-        
-        if(data.status) {
-          for(var i=0;i<data.results.length;i++) {
-            var row = data.results[i];
-            row['keyword'] = keyword
-            var $row = $query_tmpl.tmpl({item: row});
-            $row.appendTo($searcher);
-          }
-        }
-      }
-    });
-
-    rakuten_xhr_job = $.ajax(query_url, {
-      data: {vendor_name: 'rakuten', keyword: keyword},
-      dataType: 'json',
-      type: 'GET',
-      success: function(data) {
-        rakuten_xhr_job = undefined;
-        
-        if(data.status) {
-          for(var i=0;i<data.results.length;i++) {
-            var row = data.results[i];
-            row['keyword'] = keyword
-            var $row = $query_tmpl.tmpl({item: row});
-            $row.appendTo($searcher);
-          }
-        }
-      }
-    });
-
-
-  });
+  function good_luck_callback(keyword, results) {
+    if(results.length == 0) {
+      alert("找不到商品");
+    } else {
+      var data = results[0];
+      data['keyword'] = keyword;
+      
+      $form = $post_create_tmpl.tmpl({item: data});
+      $form.appendTo($("body"));
+      $form.submit();
+    }
+  }
+  function create_results_callback(keyword, results) {
+    for(var i=0;i<results.length;i++) {
+      var row = results[i];
+      row['keyword'] = keyword;
+      var $row = $query_tmpl.tmpl({item: row});
+      $row.appendTo($search_results);
+    }
+  }
 });
 </script>
 {% endblock %}
