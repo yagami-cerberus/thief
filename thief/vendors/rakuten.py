@@ -1,11 +1,13 @@
 
-from django.conf import settings
 
 from random import choice
+import urllib2
 import urllib
 import json
-
 import re
+
+from django.conf import settings
+from lxml import etree
 
 from .base import VendorBase, ProductOverview
 
@@ -48,6 +50,27 @@ class Rakuten(VendorBase):
             raise RuntimeError(doc['error'], doc['error_description'])
         
         return tuple(self.load_overview(i['Product']) for i in doc['Products'])
+    
+    def fetch_jan(self, url):
+        if not url.startswith("http://product.rakuten.co.jp/"):
+            raise RuntimeError("Can not fetch jan from url: %s" % url)
+        
+        request = urllib2.Request(url, headers={
+            "Referer": "http://product.rakuten.co.jp/",
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36"})
+        response = urllib2.urlopen(request)
+        
+        parser = etree.HTMLParser()
+        doc = etree.parse(response, parser)
+        
+        for node in doc.xpath("//div[@class='quickInfo']"):
+            text = "".join(node.itertext())
+            result = re.search("(JAN)((\s)*(:)?(\s)*)?(?P<jan>\d+)", text, re.IGNORECASE)
+            if result:
+                jan = result.groupdict().get('jan')
+                if jan: return jan
+        
+        return ''
         
     def load_overview(self, r):
         return ProductOverview(self.vendor_name, r['productId'],
