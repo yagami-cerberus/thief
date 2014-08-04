@@ -25,7 +25,7 @@ class GoogleImageSearch(object):
         req = urllib.urlopen(GOOGLE_END_POINT + "?" + qs)
         doc = json.load(req)
         
-        return [self.load_result(keyword, i) for i in doc['items']]
+        return [self.load_result(keyword, i) for i in doc.get('items', ())]
     
     def search(self, keyword):
         keyword = keyword.encode("utf8").strip()
