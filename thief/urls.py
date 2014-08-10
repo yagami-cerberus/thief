@@ -16,7 +16,7 @@ urlpatterns = patterns('',
     url(r'^auction/(?P<type>((yahoo)|(ruten)))/delete$', 'thief.auction.views.delete_auction_type', name='delete_auction_type'),
     
     url(r'^vendor/search$', 'thief.vendors.views.search_product', name='search'),
-    url(r'^vendor/query.(?P<format>(json))$', 'thief.vendors.views.query_vendor', name='query_vendor'),
+    url(r'^vendor/query.(?P<format>(json))$', 'thief.vendors.views.query', name='query_vendor'),
 
     url(r'^products$', 'thief.products.views.products', name='products'),
     

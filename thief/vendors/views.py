@@ -9,7 +9,7 @@ class search_product(ThiefREST):
 	def get(self, request):
 		return {}
 
-class query_vendor(ThiefRestAPI):
+class query(ThiefRestAPI):
     def get(self, request):
         vendor_cls = get_vendor(request.GET.get('vendor_name'))
         vendor = vendor_cls()
