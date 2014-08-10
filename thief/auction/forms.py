@@ -1,4 +1,10 @@
+from django.utils.crypto import get_random_string
+from django.template.loader import get_template
+from django.utils.html import format_html
+from django.template import Context
 from django import forms
+
+from thief.auction import models
 
 class AuctionTypeNoForm(forms.Form):
     no = forms.CharField(max_length=256, label="\xe4\xbb\xa3\xe7\xa2\xbc")
@@ -30,3 +36,19 @@ class AuctionConfigsForm(forms.Form):
 	ban_lowest_rating = forms.IntegerField(label='\xe9\x99\x90\xe5\x88\xb6\xe4\xb8\x8b\xe6\xa8\x99\xe6\x9c\x80\xe4\xbd\x8e\xe8\xa9\x95\xe5\x83\xb9', required=False)
 	ban_bad_rating = forms.IntegerField(label='\xe9\x99\x90\xe5\x88\xb6\xe4\xb8\x8b\xe6\xa8\x99\xe8\xb2\xa0\xe8\xa9\x95\xe5\x83\xb9\xe6\x95\xb8', required=False)
 
+class KeywordGroupWidget(forms.TextInput):
+    def render(self, name, value, attrs=None):
+        if not attrs: attrs = {}
+        id = get_random_string(8)
+        print(id)
+        attrs['data-kgw-id'] = id
+        input = super(KeywordGroupWidget, self).render(name, value, attrs)
+        
+        t = get_template("auction/__keyword_dropdown_selector.html")
+        return t.render(Context({
+            'keyword_groups': models.Keyword.get_groups(),
+            'input': input,
+            'input_selector': 'input[data-kgw-id=%s]' % (id, ),
+            'identify': get_random_string(6)}))
+        
+        return format_html(output)

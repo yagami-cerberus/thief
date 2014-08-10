@@ -15,12 +15,14 @@
     </div>
   </div>
   {% endif %}
-  {% if product.source_price %}
   <div class="form-group">
-    <label class="col-sm-2 control-label">來源價格</label>
-    <div class="col-sm-10 form-control-static">{{ product.source_currency|default:"" }} {{ product.source_price|default:"" }}</div>
+    <label class="col-sm-2 control-label">型號</label>
+    <div class="col-sm-10 form-control-static">{{ product.model_id|default:"" }}</div>
   </div>
-  {% endif %}
+  <div class="form-group">
+    <label class="col-sm-2 control-label">群組</label>
+    <div class="col-sm-10 form-control-static">{{ product.group|default:"" }}</div>
+  </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">條碼</label>
     <div class="col-sm-10 form-control-static">{{ product.jan|default:"" }}</div>
@@ -36,13 +38,6 @@
   <div class="form-group">
     <label class="col-sm-2 control-label">重量</label>
     <div class="col-sm-10 form-control-static">{{ product.weight|default:"" }}</div>
-  </div>
-  <div class="form-group">
-    <label class="col-sm-2 control-label">拍賣場分類</label>
-    <div class="col-sm-10 form-control-static">
-      {% if product.yahoo_no %}<div><span class="label label-primary">Yahoo</span> [{{ product.yahoo_no.no }}] {{ product.yahoo_no.title }}</div>{% endif %}
-      {% if product.ruten_no %}<div><span class="label label-primary">露天</span>: [{{ product.ruten_no.no }}] {{ product.ruten_no.title }}</div>{% endif %}
-    </div>
   </div>
   <div class="form-group">
     <label class="col-sm-2 control-label">關鍵字</label>
@@ -71,5 +66,12 @@
   <div class="form-group">
     <label class="col-sm-2 control-label">物品新舊</label>
     <div class="col-sm-10 form-control-static">{{ product.usage_status|default:"" }}</div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">拍賣場分類</label>
+    <div class="col-sm-10 form-control-static">
+      {% if product.yahoo_no %}<div><span class="label label-primary">Yahoo</span> [{{ product.yahoo_no.no }}] {{ product.yahoo_no.title }}</div>{% endif %}
+      {% if product.ruten_no %}<div><span class="label label-primary">露天</span>: [{{ product.ruten_no.no }}] {{ product.ruten_no.title }}</div>{% endif %}
+    </div>
   </div>
 </div>

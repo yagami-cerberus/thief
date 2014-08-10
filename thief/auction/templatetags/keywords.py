@@ -18,4 +18,5 @@ def keyword_group_dropdown_selector(input_selector):
     return t.render(Context({
         'keyword_groups': Keyword.get_groups(),
         'input_selector': input_selector,
-        'identify': get_random_string(6)}))
+        'identify': get_random_string(6),
+        'small': True }))
