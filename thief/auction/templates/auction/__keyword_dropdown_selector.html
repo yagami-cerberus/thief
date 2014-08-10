@@ -21,6 +21,7 @@ $(function() {
   $group = $("input[name=g]");
   $("a[data-role=kw-selector-{{ identify }}]").bind("click", function() {
     $input.val(this.innerText);
+    $input.trigger("change");
   });
 });
 </script>

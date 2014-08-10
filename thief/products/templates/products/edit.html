@@ -35,9 +35,9 @@ label.keyword:hover {
 <script type="tmpl/jquery" id="keywords-tmpl">
   <div class="row keywords">
     <div class="col-sm-11">
-      {% for k in keywords %}
-        <label class="keyword">{{ k }}</label>
-      {% endfor %}
+      {% templatetag openvariable %}each(i, kw) keywords}}
+        <label class="keyword">${ kw }</label>
+      {% templatetag openvariable %}/each}}
     </div>
     <div class="col-sm-1 text-right">
       <a href="{% url 'auction_keyword_groups' %}">管理</a>
@@ -46,12 +46,42 @@ label.keyword:hover {
 </script>
 <script type="text/javascript">
 $(function() {
+  var kw_ds = {{ kw|safe }};
+  var keywords = kw_ds.keywords;
+  var keyword_sets = kw_ds.keyword_sets;
+  
+  var $group = $("input[name=group]");
   var $input = $("[name=keywords]");
-  var $keywords = $("#keywords-tmpl").tmpl();
-  $keywords.insertAfter($input);
-  $("label", $keywords).bind("click", function() {
-    $input.val(this.innerText);
-  });
+  var $keywords = undefined;
+  
+  $input.attr("autocomplete", "off");
+  
+  $group.bind("change", function() {
+    if($keywords) $keywords.remove();
+    
+    var gn = this.value;
+    
+    var kw = [];
+    for(var i in keywords) {
+      if(keywords[i][0] == gn) kw.push(keywords[i][1]);
+    }
+    
+    $keywords = $("#keywords-tmpl").tmpl({keywords: kw});
+    $keywords.insertAfter($input);
+    $("label", $keywords).bind("click", function() {
+      $input.val($input.val() + ' ' + this.innerText);
+    });
+    
+    // ==================
+    var kw_sets = [];
+    for(var i in keyword_sets) {
+      if(keyword_sets[i][0] == gn) kw_sets.push(keyword_sets[i][1]);
+    }
+    
+    $input.autocomplete({
+      source: kw_sets
+    });
+  }).trigger("change");
 });
 </script>
 {% endblock %}

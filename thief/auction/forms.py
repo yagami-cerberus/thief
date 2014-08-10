@@ -40,7 +40,6 @@ class KeywordGroupWidget(forms.TextInput):
     def render(self, name, value, attrs=None):
         if not attrs: attrs = {}
         id = get_random_string(8)
-        print(id)
         attrs['data-kgw-id'] = id
         input = super(KeywordGroupWidget, self).render(name, value, attrs)
         
