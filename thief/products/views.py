@@ -14,7 +14,7 @@ from datetime import datetime
 from thief.products.models import Product, ProductReference, ProductImage
 from thief.products import forms
 from thief.auction.csv_packer import CsvPacker, CsvUnpacker
-from thief.auction.models import Keyword
+from thief.auction.models import Keyword, KeywordSet
 from thief.vendors.rakuten import Rakuten
 from thief.vendors.models import Cache
 from thief.vendors import ProductOverview, GoogleImageSearch
@@ -39,8 +39,6 @@ class products(ThiefREST):
             size=v_product.size)
         product.save()
         
-        import IPython
-        IPython.embed()
         if 'vendor' in request.POST:
             ref = ProductReference(product=product)
             ref_f = forms.ProductReference(request.POST, instance=ref)

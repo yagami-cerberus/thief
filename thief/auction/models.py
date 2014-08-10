@@ -24,4 +24,22 @@ class AuctionConfigs(models.Model):
     value = models.CharField(max_length=256, null=False)
 
 class Keyword(models.Model):
+    group = models.CharField(max_length=256, null=False)
     keyword = models.CharField(max_length=256, null=False)
+
+    @classmethod
+    def get_groups(cls):
+        kw_groups = {item[0] for item in Keyword.objects.annotate(c=models.Count('group')).values_list('group')}
+        kw_groups = kw_groups.union(
+            {item[0] for item in KeywordSet.objects.annotate(c=models.Count('group')).values_list('group')}
+        )
+        return sorted(kw_groups)
+    
+class KeywordSet(models.Model):
+    group = models.CharField(max_length=256, null=False)
+    set = models.CharField(max_length=4096, null=False)
+
+    @classmethod
+    def get_groups(cls):
+         return {item[0] for item in cls.objects.annotate(c=models.Count('group')).values_list('group')}
+    

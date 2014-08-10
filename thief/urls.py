@@ -8,7 +8,8 @@ urlpatterns = patterns('',
     
     url(r'^auction/global_configs$', 'thief.auction.views.global_configs', name='auction_configs'),
     url(r'^auction/global_configs/edit$', 'thief.auction.views.edit_global_configs', name='edit_auction_configs'),
-    url(r'^auction/keywords$', 'thief.auction.views.keywords', name='auction_keywords'),
+    url(r'^auction/keywords$', 'thief.auction.views.keyword_groups', name='auction_keyword_groups'),
+    url(r'^auction/keywords/(?P<group>(.+))$', 'thief.auction.views.keywords', name='auction_keywords'),
 
     url(r'^auction/(?P<type>((yahoo)|(ruten)))$', 'thief.auction.views.auction_types', name='auction_types'),
     url(r'^auction/(?P<type>((yahoo)|(ruten)))/create$', 'thief.auction.views.create_auction_type', name='create_auction_type'),

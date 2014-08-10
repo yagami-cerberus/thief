@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 
 from thief.rest import ThiefREST
 
-from thief.auction.models import YahooProductNo, RutenProductNo, AuctionConfigs, Keyword
+from thief.auction.models import YahooProductNo, RutenProductNo, AuctionConfigs, Keyword, KeywordSet
 from thief.auction.forms import AuctionTypeNoForm, AuctionConfigsForm
 
 AUCTION_TYPE = {
@@ -53,23 +53,37 @@ class edit_global_configs(ThiefREST):
         m.save()
         return m
 
-class keywords(ThiefREST):
-    template = 'auction/keywords.html'
-
+class keyword_groups(ThiefREST):
+    template = 'auction/keyword_groups.html'
+    
     def get(self, request):
-        return {'keywords': Keyword.objects.order_by('pk').all()}
-
+        return {'groups': Keyword.get_groups()}
+        
     def post(self, request):
+        group = request.POST.get('g')
         keyword = request.POST.get('k')
-        if len(Keyword.objects.filter(keyword=keyword)) == 0:
-            Keyword(keyword=keyword).save()
-        return redirect(reverse('auction_keywords'))
-
+        m = Keyword.objects.get_or_create(group=group, keyword=keyword)
+        return redirect(reverse('auction_keywords', args=(group, )))
+    
     def delete(self, request):
         pk = request.POST.get('pk')
-        for k in Keyword.objects.filter(pk=pk):
+        type = request.POST.get('type')
+        model = (type == "kw" and Keyword or KeywordSet)
+        
+        for k in model.objects.filter(pk=pk):
             k.delete()
-        return redirect(reverse('auction_keywords'))
+        
+        return redirect(reverse('auction_keywords', args=(request.POST.get('group'), )))
+
+class keywords(ThiefREST):
+    template = 'auction/keywords.html'
+    
+    def get(self, request, group):
+        return {
+            'group': group,
+            'keywords': Keyword.objects.filter(group=group).order_by('keyword').all(),
+            'keyword_sets': KeywordSet.objects.filter(group=group).order_by('set').all()
+        }
 
 class auction_types(ThiefREST):
     template = 'auction/auction_types.html'
