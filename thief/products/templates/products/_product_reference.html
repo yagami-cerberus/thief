@@ -1,0 +1,8 @@
+<div class="col-sm-3">
+  <div><label>來源</label> <a href="{{ r.url }}">{{ ref.vendor }}</a></div>
+  {% if ref.price %}<div><label>價格</label> {{ ref.currency }} {{ ref.price }}</div>{% endif %}
+  {% if ref.jan %}<div><label>JAN</label> {{ ref.jan }}</div>{% endif %}
+  {% if ref.release_date %}<div><label>發售日</label> {{ ref.release_date }}</div>{% endif %}
+  {% if ref.weight %}<div><label>重量</label> {{ ref.weight }}</div>{% endif %}
+  {% if ref.size %}<div><label>尺寸</label> {{ ref.尺寸 }}</div>{% endif %}
+</div>

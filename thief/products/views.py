@@ -11,7 +11,7 @@ from django.core.files import File
 from django.contrib import messages
 from datetime import datetime
 
-from thief.products.models import Product, ProductImage
+from thief.products.models import Product, ProductReference, ProductImage
 from thief.products import forms
 from thief.auction.csv_packer import CsvPacker, CsvUnpacker
 from thief.auction.models import Keyword
@@ -34,16 +34,19 @@ class products(ThiefREST):
     # Create
     def post(self, request):
         v_product = ProductOverview.from_dict({key: request.POST[key] for key in request.POST})
-        product = Product(vendor=v_product.vendor, item_id=v_product.item_id,
-            title=v_product.title, url=v_product.url, source_price=v_product.price,
-            source_currency=v_product.currency, jan=v_product.jan,
+        product = Product(title=v_product.title, price=v_product.price, jan=v_product.jan,
             release_date=v_product.release_date, weight=v_product.weight,
             size=v_product.size)
         product.save()
         
-        # self.try_fetch_image(product)
-        return redirect(reverse('prepare_product', args=(product.id, )))
-        # return redirect(reverse('product', args=(product.id, )))
+        import IPython
+        IPython.embed()
+        if 'vendor' in request.POST:
+            ref = ProductReference(product=product)
+            ref_f = forms.ProductReference(request.POST, instance=ref)
+            ref_f.save()
+        
+        return redirect(reverse('product', args=(product.id, )))
     
     # Delete
     def delete(self, request):
@@ -70,7 +73,7 @@ class products(ThiefREST):
         is_cache, gis_images = gis.search(product.title)
         if len(gis_images) > 0:
             product.fetch_image_from_url(gis_images[0].url)
-        
+
 class product(ThiefREST):
     template = 'products/product.html'
     

@@ -8,23 +8,15 @@ import urllib2
 from thief.auction.models import YahooProductNo, RutenProductNo
 
 class Product(models.Model):
-    vendor = models.CharField(max_length=255, null=False)
-    item_id = models.CharField(max_length=255, null=False)
-    url = models.URLField(null=True)
-    source_price = models.CharField(max_length=255, null=True)
-    source_currency = models.CharField(max_length=255, null=True)
+    model_id = models.CharField('\xe5\x9e\x8b\xe8\x99\x9f', max_length=255, null=True)
+    group = models.CharField('\xe5\x88\x86\xe9\xa1\x9e', max_length=255, null=True)
     
     title = models.CharField('\xe5\x93\x81\xe5\x90\x8d', max_length=1024, null=False)
     
     jan = models.CharField('JAN\xe6\xa2\x9d\xe7\xa2\xbc', max_length=255, null=True)
-    release_date = models.CharField('\xe7\x99\xbc\xe5\x94\xae\xe6\x97\xa5', max_length=255, null=True)
-    weight = models.CharField('\xe9\x87\x8d\xe9\x87\x8f', max_length=255, null=True)
-    size = models.CharField('\xe5\xb0\xba\xe5\xaf\xb8', max_length=255, null=True)
-    
-    # YAHOO
-    yahoo_no = models.ForeignKey(YahooProductNo, null=True, blank=True)
-    #        RUTEN
-    ruten_no = models.ForeignKey(RutenProductNo, null=True, blank=True)
+    release_date = models.CharField('\xe7\x99\xbc\xe5\x94\xae\xe6\x97\xa5', max_length=255, null=True, blank=True)
+    weight = models.CharField('\xe9\x87\x8d\xe9\x87\x8f', max_length=255, null=True, blank=True)
+    size = models.CharField('\xe5\xb0\xba\xe5\xaf\xb8', max_length=255, null=True, blank=True)
     
     keywords = models.CharField('\xe9\x97\x9c\xe9\x8d\xb5\xe5\xad\x97', max_length=255, null=True, blank=True)
     
@@ -35,6 +27,9 @@ class Product(models.Model):
     details = models.TextField('\xe7\x94\xa2\xe5\x93\x81\xe8\xaa\xaa\xe6\x98\x8e', null=True, blank=True)
     
     usage_status = models.CharField('\xe7\x89\xa9\xe5\x93\x81\xe6\x96\xb0\xe8\x88\x8a', max_length=255, null=True, blank=True)
+    
+    yahoo_no = models.ForeignKey(YahooProductNo, null=True, blank=True)
+    ruten_no = models.ForeignKey(RutenProductNo, null=True, blank=True)
     
     @classmethod
     def import_from(cls, data):
@@ -101,6 +96,20 @@ class Product(models.Model):
     def __str__(self):
         return "%i#%s" % (self.pk, self.title)
 
+class ProductReference(models.Model):
+    product = models.ForeignKey(Product, null=False)
+    
+    vendor = models.CharField(max_length=255, null=False)
+    url = models.URLField(null=True)
+    
+    price = models.CharField(max_length=255, null=True, blank=True)
+    currency = models.CharField(max_length=255, null=True, blank=True)
+    jan = models.CharField('JAN\xe6\xa2\x9d\xe7\xa2\xbc', max_length=255, null=True, blank=True)
+    release_date = models.CharField('\xe7\x99\xbc\xe5\x94\xae\xe6\x97\xa5', max_length=255, null=True, blank=True)
+    weight = models.CharField('\xe9\x87\x8d\xe9\x87\x8f', max_length=255, null=True, blank=True)
+    size = models.CharField('\xe5\xb0\xba\xe5\xaf\xb8', max_length=255, null=True, blank=True)
+    
+    
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, null=False)
     image = models.ImageField(upload_to=path.join('data', 'images'), null=False)

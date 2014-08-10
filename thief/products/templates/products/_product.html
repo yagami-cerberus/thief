@@ -3,12 +3,15 @@
     <label class="col-sm-2 control-label">品名</label>
     <div class="col-sm-10 form-control-static">{{ product.title }}</div>
   </div>
-  {% if product.vendor %}
+  {% if product.productreference_set.count %}
   <div class="form-group">
     <label class="col-sm-2 control-label">資料來源</label>
     <div class="col-sm-10 form-control-static">
-      {% if product.url %}<a href="{{ product.url }}">{{ product.vendor|default:"" }}</a>
-      {% else %}{{ product.vendor|default:"" }}{% endif %}
+      <div class="container-fluid">
+        {% for r in product.productreference_set.all %}
+          {% include 'products/_product_reference.html' with ref=r %}
+        {% endfor %}
+      </div>
     </div>
   </div>
   {% endif %}
