@@ -2,6 +2,7 @@ from tempfile import NamedTemporaryFile
 import mimetypes
 import logging
 import zipfile
+import json
 import os
 
 from django.shortcuts import render, redirect
@@ -115,12 +116,21 @@ class prepare_product(product):
 class edit_product(ThiefREST):
     template = 'products/edit.html'
     
+    def get_keywords_data(self):
+        return json.dumps({
+            'keywords': [(k.group, k.keyword) for k in Keyword.objects.order_by("keyword").all()],
+            'keyword_sets': [(k.group, k.set) for k in KeywordSet.objects.order_by("set").all()]
+        })
+    
+    def update_keyword_set(self, product):
+        KeywordSet.objects.get_or_create(set=product.keywords, group=product.group)
+    
     def get(self, request, id):
         product = Product.objects.get(id=id)
         form = forms.Product(instance=product)
         keywords = Keyword.objects.all().values_list('keyword', flat=True)
         
-        return {'form': form, 'keywords': keywords}
+        return {'form': form, 'kw': self.get_keywords_data()}
         
     def post(self, request, id):
         product = Product.objects.get(id=id)
@@ -128,9 +138,10 @@ class edit_product(ThiefREST):
         
         if form.is_valid():
             form.save()
+            self.update_keyword_set(product)
             return redirect(reverse('product', args=(product.id, )))
         else:
-            return {'p': product, 'form': form}
+            return {'form': form, 'kw': self.get_keywords_data()}
         
 class edit_image(ThiefREST):
     template = 'products/edit_images.html'
