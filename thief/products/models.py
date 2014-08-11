@@ -5,7 +5,7 @@ from os import path
 import urlparse
 import urllib2
 
-from thief.auction.models import YahooProductNo, RutenProductNo
+from thief.auction.models import YahooProductNo, RutenProductNo, RakutenProductNo
 
 class Product(models.Model):
     title = models.CharField('\xe5\x93\x81\xe5\x90\x8d', max_length=1024, null=False)
@@ -30,7 +30,9 @@ class Product(models.Model):
     
     yahoo_no = models.ForeignKey(YahooProductNo, null=True, blank=True)
     ruten_no = models.ForeignKey(RutenProductNo, null=True, blank=True)
+    rakuten_no = models.ForeignKey(RakutenProductNo, null=True, blank=True)
     
+    # TODO: This method is broken and going to be removed.
     @classmethod
     def import_from(cls, data):
         p = Product(vendor=data.get('vendor', 'unknow'), item_id='',

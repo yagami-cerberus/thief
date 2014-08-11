@@ -3,12 +3,13 @@ from django.shortcuts import render, redirect
 
 from thief.rest import ThiefREST
 
-from thief.auction.models import YahooProductNo, RutenProductNo, AuctionConfigs, Keyword, KeywordSet
+from thief.auction.models import YahooProductNo, RutenProductNo, RakutenProductNo, AuctionConfigs, Keyword, KeywordSet
 from thief.auction.forms import AuctionTypeNoForm, AuctionConfigsForm
 
 AUCTION_TYPE = {
     'yahoo': YahooProductNo,
-    'ruten': RutenProductNo
+    'ruten': RutenProductNo,
+    'rakuten': RakutenProductNo
 }
 
 class global_configs(ThiefREST):

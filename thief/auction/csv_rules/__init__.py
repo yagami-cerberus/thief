@@ -35,7 +35,6 @@ class BaseRule(object):
         elif mode == 'r':
             self.mode = 'r'
             self.csv = csv.DictReader(self.file)
-            #.decode("big5")
     
     def close_write(self):
         self.file.flush()
@@ -96,9 +95,16 @@ class YahooRule(BaseRule):
 class RutenRule(BaseRule):
     def __init__(self, fileobj, mode):
         BaseRule.__init__(self, fileobj, mode, 'ruten')
-
+    
+    def close_write(self):
+        BaseRule.close_write(self)
+        return 'item_rakuten.csv'
+        
     def data_2_csv(self, field, meta):
         val = meta.get(field)
+        if field == "describe":
+            pass
+        
         if val:
             if isinstance(val, unicode):
                 return val.encode("big5", "ignore")
@@ -116,3 +122,32 @@ class RutenRule(BaseRule):
     def close_write(self):
         BaseRule.close_write(self)
         return 'ruten_auction.csv'
+
+class RakutenRule(BaseRule):
+    def __init__(self, fileobj, mode):
+        BaseRule.__init__(self, fileobj, mode, 'rakuten')
+    
+    def data_2_csv(self, field, meta):
+        val = meta.get(field)
+        if field == "default_0":
+            return "0"
+        elif field == "default_1":
+            return "1"
+        elif field == "default_-1":
+            return "-1"
+        elif field == "describe":
+            return ""
+        
+        if val:
+            if isinstance(val, unicode):
+                return val.encode("big5", "ignore")
+            elif isinstance(val, str):
+                return val
+            elif isinstance(val, bool):
+                return val and "y" or "n"
+            elif isinstance(val, (int, float, long)):
+                return "%s" % val
+            else:
+                return "%s" % val
+        else:
+            return ""

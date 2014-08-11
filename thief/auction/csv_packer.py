@@ -18,6 +18,8 @@ class CsvPacker(object):
             return csv_rules.YahooRule(self.csv_file, 'w')
         elif type == 'ruten':
             return csv_rules.RutenRule(self.csv_file, 'w')
+        elif type == 'rakuten':
+            return csv_rules.RakutenRule(self.csv_file, 'w')
 
     @property
     def archive_path(self):

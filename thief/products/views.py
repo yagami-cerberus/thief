@@ -194,6 +194,7 @@ class download_csv(ThiefREST):
         except RuntimeError as e:
             return HttpResponse(e.args[0], content_type="text/plain")
 
+# TODO: This will not be use anymore
 class upload_csv(ThiefREST):
     template = 'products/upload_csv.html'
     

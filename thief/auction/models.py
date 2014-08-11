@@ -19,6 +19,9 @@ class YahooProductNo(ProductTypeNo):
 class RutenProductNo(ProductTypeNo):
     brand = '\xe9\x9c\xb2\xe5\xa4\xa9\xe6\x8b\x8d\xe8\xb3\xa3'
 
+class RakutenProductNo(ProductTypeNo):
+    brand = '\xe6\xa8\x82\xe5\xa4\xa9'
+
 class AuctionConfigs(models.Model):
     key = models.CharField(max_length=256, null=False)
     value = models.CharField(max_length=256, null=False)

@@ -11,10 +11,10 @@ urlpatterns = patterns('',
     url(r'^auction/keywords$', 'thief.auction.views.keyword_groups', name='auction_keyword_groups'),
     url(r'^auction/keywords/(?P<group>(.+))$', 'thief.auction.views.keywords', name='auction_keywords'),
 
-    url(r'^auction/(?P<type>((yahoo)|(ruten)))$', 'thief.auction.views.auction_types', name='auction_types'),
-    url(r'^auction/(?P<type>((yahoo)|(ruten)))/create$', 'thief.auction.views.create_auction_type', name='create_auction_type'),
-    url(r'^auction/(?P<type>((yahoo)|(ruten)))/edit/(?P<id>\d+)$', 'thief.auction.views.edit_auction_type', name='edit_auction_type'),
-    url(r'^auction/(?P<type>((yahoo)|(ruten)))/delete$', 'thief.auction.views.delete_auction_type', name='delete_auction_type'),
+    url(r'^auction/(?P<type>((yahoo)|(ruten)|(rakuten)))$', 'thief.auction.views.auction_types', name='auction_types'),
+    url(r'^auction/(?P<type>((yahoo)|(ruten)|(rakuten)))/create$', 'thief.auction.views.create_auction_type', name='create_auction_type'),
+    url(r'^auction/(?P<type>((yahoo)|(ruten)|(rakuten)))/edit/(?P<id>\d+)$', 'thief.auction.views.edit_auction_type', name='edit_auction_type'),
+    url(r'^auction/(?P<type>((yahoo)|(ruten)|(rakuten)))/delete$', 'thief.auction.views.delete_auction_type', name='delete_auction_type'),
     
     url(r'^vendor/batch_import$', 'thief.vendors.views.batch_import', name='vendor_batch_import'),
     url(r'^vendor/import_item.(?P<format>(json))$', 'thief.vendors.views.import_item', name='vendor_import_item'),
@@ -23,7 +23,7 @@ urlpatterns = patterns('',
 
     url(r'^products$', 'thief.products.views.products', name='products'),
     
-    url(r'^products/download/(?P<auction_type>((yahoo)|(ruten))).zip$', 'thief.products.views.download_csv', name='download_products_csv'),
+    url(r'^products/download/(?P<auction_type>((yahoo)|(ruten)|(rakuten))).zip$', 'thief.products.views.download_csv', name='download_products_csv'),
     url(r'^products/upload$', 'thief.products.views.upload_csv', name='upload_products_csv'),
 
     url(r'^product/(?P<id>\d+)$', 'thief.products.views.product', name='product'),
