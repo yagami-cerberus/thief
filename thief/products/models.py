@@ -8,10 +8,10 @@ import urllib2
 from thief.auction.models import YahooProductNo, RutenProductNo
 
 class Product(models.Model):
+    title = models.CharField('\xe5\x93\x81\xe5\x90\x8d', max_length=1024, null=False)
+    
     model_id = models.CharField('\xe5\x9e\x8b\xe8\x99\x9f', max_length=255, null=True)
     group = models.CharField('\xe5\x88\x86\xe9\xa1\x9e', max_length=255, null=True)
-    
-    title = models.CharField('\xe5\x93\x81\xe5\x90\x8d', max_length=1024, null=False)
     
     jan = models.CharField('JAN\xe6\xa2\x9d\xe7\xa2\xbc', max_length=255, null=True)
     release_date = models.CharField('\xe7\x99\xbc\xe5\x94\xae\xe6\x97\xa5', max_length=255, null=True, blank=True)
@@ -100,7 +100,7 @@ class ProductReference(models.Model):
     product = models.ForeignKey(Product, null=False)
     
     vendor = models.CharField(max_length=255, null=False)
-    url = models.URLField(null=True)
+    url = models.URLField(max_length=1024, null=True)
     
     price = models.CharField(max_length=255, null=True, blank=True)
     currency = models.CharField(max_length=255, null=True, blank=True)

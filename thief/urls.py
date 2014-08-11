@@ -16,6 +16,8 @@ urlpatterns = patterns('',
     url(r'^auction/(?P<type>((yahoo)|(ruten)))/edit/(?P<id>\d+)$', 'thief.auction.views.edit_auction_type', name='edit_auction_type'),
     url(r'^auction/(?P<type>((yahoo)|(ruten)))/delete$', 'thief.auction.views.delete_auction_type', name='delete_auction_type'),
     
+    url(r'^vendor/batch_import$', 'thief.vendors.views.batch_import', name='vendor_batch_import'),
+    url(r'^vendor/import_item.(?P<format>(json))$', 'thief.vendors.views.import_item', name='vendor_import_item'),
     url(r'^vendor/search$', 'thief.vendors.views.search_product', name='search'),
     url(r'^vendor/query.(?P<format>(json))$', 'thief.vendors.views.query', name='query_vendor'),
 
