@@ -28,17 +28,19 @@
   background-color: #ff9999;
 }
 
+.image-cell.image-remove-cell img {
+  max-height: 160px;
+}
 </style>
-
 <h3>產品: {{ p.title }}</h3>
 <hr />
-<form action="" method="post" role="form" enctype="multipart/form-data">{% csrf_token %}
+<form action="" method="post" role="form" enctype="multipart/form-data" role="form">{% csrf_token %}
   <div class="container">
     <h4>現有圖片</h4>
     <div class="container">
       {% for image in p.productimage_set.all %}
       <div class="image-cell image-remove-cell">
-        <img src="{% url 'product_image' image.id %}" class="img-thumbnail" />
+        <a href="{% url 'product_image' image.id %}" target="_blank"><img src="{% url 'product_image' image.id %}" class="img-responsive img-thumbnail" /></a>
         <div>
           <input type="checkbox" id="current_img_{{ forloop.counter }}" name="delete" value="{{ image.id }}" />
           <label for="current_img_{{ forloop.counter }}" alt="{{ image.title }}">刪除</label>
@@ -53,7 +55,7 @@
     <div class="container">
       {% for image in gis %}
       <div class="image-cell image-add-cell">
-        <a href="{{ image.url }}" target="_blank"><img src="{{ image.thumb_url }}" class="img-thumbnail" /></a>
+        <a href="{{ image.url }}" target="_blank"><img src="{{ image.thumb_url }}" class="img-responsive img-thumbnail" /></a>
         <div>
           <input type="checkbox" id="images_{{ forloop.counter }}" name="images" value="{{ image.url }}" />
           <label for="images_{{ forloop.counter }}" alt="{{ image.title }}">{{ image.title }}</label>
@@ -61,8 +63,8 @@
       </div>
       {% endfor %}
       <hr />
-        <label>手動上傳圖片</label>
-        <input type="file" name="files" multiple="" accept="image/*" >
+      <label>手動上傳圖片</label>
+      <input type="file" name="files" multiple="" accept="image/*" >
       <hr />
       <div class"row">
         <div class="text-right">

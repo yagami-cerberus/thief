@@ -162,7 +162,7 @@ class edit_image(ThiefREST):
         image_delete = request.POST.getlist('delete')
         
         for url in image_urls:
-            self.fetch_image_from_url(url)
+            product.fetch_image_from_url(url)
         
         for file in image_uploaded:
             pi = ProductImage(product=product)
