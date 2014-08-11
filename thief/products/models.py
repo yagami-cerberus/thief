@@ -69,8 +69,6 @@ class Product(models.Model):
     def export(self):
         data = {
             'title': self.title,
-            'yahoo_no': self.yahoo_no_id and self.yahoo_no.no,
-            'ruten_no': self.ruten_no_id and self.ruten_no.no,
             'usage_status': self.usage_status,
             'keywords': self.keywords,
             'summary': self.summary,
@@ -80,6 +78,13 @@ class Product(models.Model):
             'color': self.color,
             'details': self.details
         }
+        
+        if self.yahoo_no_id:
+            data['yahoo_no'], data['yahoo_catalog_name'] = self.yahoo_no.title
+        if self.ruten_no_id:
+            data['ruten_no'], data['ruten_catalog_name'] = self.ruten_no.title
+        if self.rakuten_no_id:
+            data['rakuten_no'], data['rakuten_catalog_name'] = self.rakuten_no.title
 
         attach_counter = 1
         attach_name = self.jan or ("_%s" % self.pk)
@@ -87,7 +92,7 @@ class Product(models.Model):
         for img in self.productimage_set.order_by("pk"):
             if not path.isfile(img.image.path): continue
             ext = path.splitext(img.image.path)[-1]
-            arcname = "%s-%s%s" % (attach_name, attach_counter, ext)
+            arcname = "%s_%02d%s" % (attach_name, attach_counter, ext)
             attach_files.append((img.image.path, arcname))
             data['image_%s' % attach_counter] = arcname
 

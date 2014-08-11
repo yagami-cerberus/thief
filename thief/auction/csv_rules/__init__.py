@@ -78,6 +78,11 @@ class YahooRule(BaseRule):
 
     def data_2_csv(self, field, meta):
         val = meta.get(field)
+        if field == "describe":
+            if "image_1" in meta:
+				return """<center><img src="%s%s"></center>""" % \
+                    (meta.get("yahoo_image_url_prefix", ""), meta['image_1'])
+        
         if val:
             if isinstance(val, unicode):
                 return val.encode("big5", "ignore")
@@ -103,7 +108,9 @@ class RutenRule(BaseRule):
     def data_2_csv(self, field, meta):
         val = meta.get(field)
         if field == "describe":
-            pass
+            if "image_1" in meta:
+                return """<center><img src="%s%s"></center>""" % \
+                    (meta.get("ruten_image_url_prefix", ""), meta['image_1'])
         
         if val:
             if isinstance(val, unicode):
@@ -135,8 +142,12 @@ class RakutenRule(BaseRule):
             return "1"
         elif field == "default_-1":
             return "-1"
+        elif field == "home_catalog":
+            return "\xe9\xa6\x96\xe9\xa0\x81"
         elif field == "describe":
-            return ""
+            if "image_1" in meta:
+                return """<center><img src="%s%s"></center>""" % \
+                    (meta.get("rakuten_image_url_prefix", ""), meta['image_1'])
         
         if val:
             if isinstance(val, unicode):
