@@ -25,6 +25,8 @@ class Product(models.Model):
     color = models.CharField('\xe9\xa1\x8f\xe8\x89\xb2', max_length=255, null=True, blank=True)
     details = models.TextField('\xe7\x94\xa2\xe5\x93\x81\xe8\xaa\xaa\xe6\x98\x8e', null=True, blank=True)
     
+    created_at = models.CharField('\xe4\xb8\x8a\xe5\x82\xb3\xe6\x99\x82\xe9\x96\x93', max_length=50, null=True, blank=True)
+    
     # TODO: This method is broken and going to be removed.
     @classmethod
     def import_from(cls, data):

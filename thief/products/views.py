@@ -8,6 +8,7 @@ import os
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, StreamingHttpResponse
+from django.utils.timezone import now, timedelta
 from django.core.files import File
 from django.contrib import messages
 from datetime import datetime
@@ -25,6 +26,8 @@ logger = logging.getLogger(__name__)
 SESSION_LAST_UPLOAD_TIME_KEY = 'lutk'
 SESSION_LAST_UPLOAD_PRODUCTS_KEY = 'lupk'
 
+current_local_time_str = lambda: (now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
+
 class products(ThiefREST):
     template = 'products/products.html'
     
@@ -36,7 +39,8 @@ class products(ThiefREST):
     def post(self, request):
         v_product = ProductOverview.from_dict({key: request.POST[key] for key in request.POST})
         product = Product(title=v_product.title, jan=v_product.jan, release_date=v_product.release_date,
-            weight=v_product.weight, size=v_product.size)
+            weight=v_product.weight, size=v_product.size,
+            created_at=current_local_time_str())
 
         keyword = request.POST.get('keyword')
         if keyword: product.model_id = keyword
@@ -212,6 +216,7 @@ class upload_csv(ThiefREST):
         for data in unpacker.load():
             data['vender'] = auction_type
             p = Product.import_from(data)
+            p.created_at = current_local_time_str()
             idset.append("%s"%p.id)
         
         request.session["upload_success"] = True

@@ -39,7 +39,7 @@
           <td>{{ p.model_id|default:"" }}</td>
           <td>{{ p.release_date|default:"" }}</td>
           <td>{{ p.price|default:"" }}</td>
-          <td></td>
+          <td>{{ p.created_at|default:"" }}</td>
           <td><a href="{% url 'product' p.id %}">詳細</a></td>
         </tr>
       {% endfor %}
