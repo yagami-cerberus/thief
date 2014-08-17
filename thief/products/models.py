@@ -22,12 +22,9 @@ class Product(models.Model):
     
     summary = models.TextField('\xe7\xb0\xa1\xe4\xbb\x8b', null=True, blank=True)
     price = models.IntegerField('\xe5\x83\xb9\xe6\xa0\xbc', null=True, blank=True)
-    amount = models.IntegerField('\xe6\x95\xb8\xe9\x87\x8f', null=True, blank=True) 
     color = models.CharField('\xe9\xa1\x8f\xe8\x89\xb2', max_length=255, null=True, blank=True)
     details = models.TextField('\xe7\x94\xa2\xe5\x93\x81\xe8\xaa\xaa\xe6\x98\x8e', null=True, blank=True)
-    
-    usage_status = models.CharField('\xe7\x89\xa9\xe5\x93\x81\xe6\x96\xb0\xe8\x88\x8a', max_length=255, null=True, blank=True)
-    
+        
     yahoo_no = models.ForeignKey(YahooProductNo, null=True, blank=True)
     ruten_no = models.ForeignKey(RutenProductNo, null=True, blank=True)
     rakuten_no = models.ForeignKey(RakutenProductNo, null=True, blank=True)
