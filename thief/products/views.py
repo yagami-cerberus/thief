@@ -35,9 +35,12 @@ class products(ThiefREST):
     # Create
     def post(self, request):
         v_product = ProductOverview.from_dict({key: request.POST[key] for key in request.POST})
-        product = Product(title=v_product.title, price=v_product.price, jan=v_product.jan,
-            release_date=v_product.release_date, weight=v_product.weight,
-            size=v_product.size)
+        product = Product(title=v_product.title, jan=v_product.jan, release_date=v_product.release_date,
+            weight=v_product.weight, size=v_product.size)
+
+        keyword = request.POST.get('keyword')
+        if keyword: product.model_id = keyword
+        
         product.save()
         
         if 'vendor' in request.POST:
@@ -45,7 +48,7 @@ class products(ThiefREST):
             ref_f = forms.ProductReference(request.POST, instance=ref)
             ref_f.save()
         
-        return redirect(reverse('product', args=(product.id, )))
+        return redirect(reverse('prepare_product', args=(product.id, )))
     
     # Delete
     def delete(self, request):
