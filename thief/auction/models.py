@@ -6,7 +6,15 @@ class ProductTypeNo(models.Model):
     
     no = models.CharField(max_length=256, null=False)
     title = models.CharField(max_length=1024, null=False)
-
+    
+    @classmethod
+    def get_no(cls, name):
+        m = cls.objects.filter(title=name).first()
+        if m:
+            return m.no
+        else:
+            return ""
+        
     def __repr__(self):
     	return "%s %s" % (self.no, self.title)
 

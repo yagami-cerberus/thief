@@ -11,7 +11,7 @@ class Product(models.Model):
     title = models.CharField('\xe5\xbb\xa0\xe7\x89\x8c', max_length=1024, null=False)
     
     model_id = models.CharField('\xe5\x9e\x8b\xe8\x99\x9f', max_length=255, null=True)
-    group = models.CharField('\xe5\x88\x86\xe9\xa1\x9e', max_length=255, null=True)
+    group = models.CharField('\xe7\xbe\xa4\xe7\xb5\x84', max_length=255, null=True)
     
     jan = models.CharField('JAN\xe6\xa2\x9d\xe7\xa2\xbc', max_length=255, null=True)
     release_date = models.CharField('\xe7\x99\xbc\xe5\x94\xae\xe6\x97\xa5', max_length=255, null=True, blank=True)
@@ -24,10 +24,6 @@ class Product(models.Model):
     price = models.IntegerField('\xe5\x83\xb9\xe6\xa0\xbc', null=True, blank=True)
     color = models.CharField('\xe9\xa1\x8f\xe8\x89\xb2', max_length=255, null=True, blank=True)
     details = models.TextField('\xe7\x94\xa2\xe5\x93\x81\xe8\xaa\xaa\xe6\x98\x8e', null=True, blank=True)
-    
-    yahoo_no = models.ForeignKey(YahooProductNo, null=True, blank=True)
-    ruten_no = models.ForeignKey(RutenProductNo, null=True, blank=True)
-    rakuten_no = models.ForeignKey(RakutenProductNo, null=True, blank=True)
     
     # TODO: This method is broken and going to be removed.
     @classmethod
@@ -73,13 +69,10 @@ class Product(models.Model):
             'details': self.details
         }
         
-        if self.yahoo_no_id:
-            data['yahoo_no'], data['yahoo_catalog_name'] = self.yahoo_no.title
-        if self.ruten_no_id:
-            data['ruten_no'], data['ruten_catalog_name'] = self.ruten_no.title
-        if self.rakuten_no_id:
-            data['rakuten_no'], data['rakuten_catalog_name'] = self.rakuten_no.title
-
+        data['yahoo_no'] = YahooProductNo.get_no(self.group)
+        data['ruten_no'] = RutenProductNo.get_no(self.group)
+        data['rakuten_no'] = RakutenProductNo.get_no(self.group)
+        
         attach_counter = 1
         attach_name = self.jan or ("_%s" % self.pk)
         attach_files = []
