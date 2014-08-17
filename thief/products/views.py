@@ -63,18 +63,6 @@ class products(ThiefREST):
                     pass
             
         return redirect(reverse('products'))
-    
-    # Special hook
-    def try_fetch_jan(self, productOverview):
-        if productOverview.url.startswith("http://product.rakuten.co.jp/"):
-            productOverview.jan = Rakuten().fetch_jan(productOverview.url)
-        
-    # Special hook
-    def try_fetch_image(self, product):
-        gis = GoogleImageSearch()
-        is_cache, gis_images = gis.search(product.title)
-        if len(gis_images) > 0:
-            product.fetch_image_from_url(gis_images[0].url)
 
 class product(ThiefREST):
     template = 'products/product.html'
@@ -107,14 +95,15 @@ class prepare_product(product):
             return HttpResponse("false", content_type="application/json")
 
     def jan(self, product):
-        if product.url.startswith("http://product.rakuten.co.jp/"):
-            jan = Rakuten().fetch_jan(product.url)
-            if jan:
-                product.jan = jan
-                product.save()
-                return HttpResponse("true", content_type="application/json")
-            else:
-                return HttpResponse("false", content_type="application/json")
+        for r in product.productreference_set.all():
+            if r.url.startswith("http://product.rakuten.co.jp/"):
+                jan = Rakuten().fetch_jan(r.url)
+                if jan:
+                    product.jan = jan
+                    product.save()
+                    return HttpResponse("true", content_type="application/json")
+                else:
+                    return HttpResponse("false", content_type="application/json")
     
 class edit_product(ThiefREST):
     template = 'products/edit.html'
