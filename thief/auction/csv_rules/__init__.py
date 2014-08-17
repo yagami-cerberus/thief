@@ -6,6 +6,13 @@ import os
 
 from django.conf import settings
 
+def modify_title(meta):
+    title = meta.get('title') or ''
+    model_id = meta.get('model_id') or ''
+    summary = meta.get('summary') or ''
+    keywords = meta.get('keywords') or ''
+    return ' '.join((title, model_id, summary, keywords))
+    
 class BaseRule(object):
     BOOLEAN_FIELDS = []
     
@@ -80,8 +87,10 @@ class YahooRule(BaseRule):
         val = meta.get(field)
         if field == "describe":
             if "image_1" in meta:
-				return """<center><img src="%s%s"></center>""" % \
+                return """<center><img src="%s%s"></center>""" % \
                     (meta.get("yahoo_image_url_prefix", ""), meta['image_1'])
+        elif field == "title":
+            return modify_title(meta)
         
         if val:
             if isinstance(val, unicode):
@@ -111,6 +120,8 @@ class RutenRule(BaseRule):
             if "image_1" in meta:
                 return """<center><img src="%s%s"></center>""" % \
                     (meta.get("ruten_image_url_prefix", ""), meta['image_1'])
+        elif field == "title":
+            return modify_title(meta)
         
         if val:
             if isinstance(val, unicode):
@@ -148,6 +159,8 @@ class RakutenRule(BaseRule):
             if "image_1" in meta:
                 return """<center><img src="%s%s"></center>""" % \
                     (meta.get("rakuten_image_url_prefix", ""), meta['image_1'])
+        elif field == "title":
+            return modify_title(meta)
         
         if val:
             if isinstance(val, unicode):

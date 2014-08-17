@@ -63,6 +63,7 @@ class Product(models.Model):
     def export(self):
         data = {
             'title': self.title,
+            'model_id': self.model_id,
             'keywords': self.keywords,
             'summary': self.summary,
             'start_price': self.price,
