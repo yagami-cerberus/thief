@@ -2,7 +2,7 @@
 {% load_keyword_groups %}
 <form role="form" class="form-inline" method="post" action="{% url 'auction_keyword_groups' %}" id="keyword-add">{% csrf_token %}
   <div class="form-group">
-    <label class="sr-only" for="k">群組</label>
+    <label class="sr-only" for="k">品項</label>
     <div class="input-group">
       <input type="text" name="g" class="form-control input-sm" placeholder="群組" value="{{ group }}" />
       <div class="input-group-btn">

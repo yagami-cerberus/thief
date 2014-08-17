@@ -72,7 +72,7 @@ def get_size(r):
     if tu == 'hundredths-inches':
         try:
             h, l, w = float(th), float(tl), float(tw)
-            return '%.1fx%.1fx%.1f cm' % (h * 0.0254, l * 0.0254, w * 0.0254)
+            return '%.1fx%.1fx%.1f cm' % (w * 0.0254, l * 0.0254, h * 0.0254)
         except ValueError:
             pass
     

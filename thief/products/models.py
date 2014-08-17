@@ -8,7 +8,7 @@ import urllib2
 from thief.auction.models import YahooProductNo, RutenProductNo, RakutenProductNo
 
 class Product(models.Model):
-    title = models.CharField('\xe5\x93\x81\xe5\x90\x8d', max_length=1024, null=False)
+    title = models.CharField('\xe5\xbb\xa0\xe7\x89\x8c', max_length=1024, null=False)
     
     model_id = models.CharField('\xe5\x9e\x8b\xe8\x99\x9f', max_length=255, null=True)
     group = models.CharField('\xe5\x88\x86\xe9\xa1\x9e', max_length=255, null=True)
@@ -16,7 +16,7 @@ class Product(models.Model):
     jan = models.CharField('JAN\xe6\xa2\x9d\xe7\xa2\xbc', max_length=255, null=True)
     release_date = models.CharField('\xe7\x99\xbc\xe5\x94\xae\xe6\x97\xa5', max_length=255, null=True, blank=True)
     weight = models.CharField('\xe9\x87\x8d\xe9\x87\x8f', max_length=255, null=True, blank=True)
-    size = models.CharField('\xe5\xb0\xba\xe5\xaf\xb8', max_length=255, null=True, blank=True)
+    size = models.CharField('\xe5\xb0\xba\xe5\xaf\xb8 (\xe5\xaf\xacx\xe6\xb7\xb1x\xe9\xab\x98)', max_length=255, null=True, blank=True)
     
     keywords = models.CharField('\xe9\x97\x9c\xe9\x8d\xb5\xe5\xad\x97', max_length=255, null=True, blank=True)
     

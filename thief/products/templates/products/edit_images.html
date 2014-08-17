@@ -35,6 +35,10 @@
 <h3>產品: {{ p.title }}</h3>
 <hr />
 <form action="" method="post" role="form" enctype="multipart/form-data" role="form">{% csrf_token %}
+  <div style="float: right;">
+    <a href="{% url 'product' p.id %}">上一頁</a>
+    <button class="btn btn-primary">更新</button>
+  </div>
   <div class="container">
     <h4>現有圖片</h4>
     <div class="container">
@@ -53,6 +57,9 @@
   <div class="container">
     <h4>新增圖片</h4>
     <div class="container">
+      <label>手動上傳圖片</label>
+      <input type="file" name="files" multiple="" accept="image/*" >
+      <hr />
       {% for image in gis %}
       <div class="image-cell image-add-cell">
         <a href="{{ image.url }}" target="_blank"><img src="{{ image.thumb_url }}" class="img-responsive img-thumbnail" /></a>
@@ -63,12 +70,9 @@
       </div>
       {% endfor %}
       <hr />
-      <label>手動上傳圖片</label>
-      <input type="file" name="files" multiple="" accept="image/*" >
-      <hr />
       <div class"row">
         <div class="text-right">
-          <button class="btn btn-primary">儲存</button>
+          <button class="btn btn-primary">更新</button>
         </div>
       </div>
     </div>

@@ -23,8 +23,11 @@
     <thead>
       <tr>
         <th style="width: 30px"></th>
-        <th>品名</th>
-        <th>關鍵字</th>
+        <th>廠牌</th>
+        <th>型號</th>
+        <th>發售日</th>
+        <th>價格</th>
+        <th>上傳時間</th>
         <th></th>
       </tr>
     </thead>
@@ -33,7 +36,10 @@
         <tr>
           <td><input type="checkbox" id="p_{{ p.id }}" name="p" value="{{ p.id }}" /></td>
           <td><label for="p_{{ p.id }}">{{ p.title }}</label></td>
-          <td>{{ p.keywords|default:"" }}</td>
+          <td>{{ p.model_id|default:"" }}</td>
+          <td>{{ p.release_date|default:"" }}</td>
+          <td>{{ p.price|default:"" }}</td>
+          <td></td>
           <td><a href="{% url 'product' p.id %}">詳細</a></td>
         </tr>
       {% endfor %}
