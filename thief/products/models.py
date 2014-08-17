@@ -24,7 +24,7 @@ class Product(models.Model):
     price = models.IntegerField('\xe5\x83\xb9\xe6\xa0\xbc', null=True, blank=True)
     color = models.CharField('\xe9\xa1\x8f\xe8\x89\xb2', max_length=255, null=True, blank=True)
     details = models.TextField('\xe7\x94\xa2\xe5\x93\x81\xe8\xaa\xaa\xe6\x98\x8e', null=True, blank=True)
-        
+    
     yahoo_no = models.ForeignKey(YahooProductNo, null=True, blank=True)
     ruten_no = models.ForeignKey(RutenProductNo, null=True, blank=True)
     rakuten_no = models.ForeignKey(RakutenProductNo, null=True, blank=True)
@@ -34,8 +34,7 @@ class Product(models.Model):
     def import_from(cls, data):
         p = Product(vendor=data.get('vendor', 'unknow'), item_id='',
             title=data.get('title') or 'No title', url='', source_price=data.get('target_price'),
-            usage_status=data.get('usage_status'), summary=data.get('summary'), amount=data.get('amount'),
-            color=data.get('color'), details=data.get('details'))
+            summary=data.get('summary'), color=data.get('color'), details=data.get('details'))
         p.save()
         return p
         
@@ -66,12 +65,10 @@ class Product(models.Model):
     def export(self):
         data = {
             'title': self.title,
-            'usage_status': self.usage_status,
             'keywords': self.keywords,
             'summary': self.summary,
             'start_price': self.price,
             'target_price': self.price,
-            'amount': self.amount,
             'color': self.color,
             'details': self.details
         }
