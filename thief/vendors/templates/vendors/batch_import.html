@@ -22,13 +22,14 @@
 </div>
 
 {% if data %}
+<div class="alert alert-warning">注意：開始批次上傳後關閉本頁面將會中斷批次上傳作業</div>
 <table class="table table-striped">
   <thead>
-    <tr><th>型號</th><th>群組</th><th style="width: 100px"></th></tr>
+    <tr><th>型號</th><th>群組</th><th>價格</th><th style="width: 100px"></th></tr>
   </thead>
   <tbody>
     {% for r in data %}
-      <tr data-role="item" data-type="{{ r.t }}" data-group="{{ r.g }}"><td>{{ r.t }}</td><td>{{ r.g }}</td><td data-role="st"></td></tr>
+      <tr data-role="item" data-type="{{ r.t }}" data-group="{{ r.g }}" data-price="{{ r.p }}"><td>{{ r.t }}</td><td>{{ r.g }}</td><td>{{ r.p }}</td><td data-role="st"></td></tr>
     {% endfor %}
   </tbody>
 </table>
@@ -59,6 +60,8 @@ $(function() {
             .text("")
             .append($("<span>OK</span>"))
             .append($("<a>檢視</a>").attr('href', result.url));
+      }, error: function() {
+        $("[data-role=st]", $element).text("系統錯誤")
       }
     });
   }
@@ -72,6 +75,8 @@ $(function() {
     setTimeout(function() {
       working_thread($rows, index + 1);
     }, 60000);
+    var $new_row = $rows[index + 1];
+    $("[data-role=st]", $new_row).text("60秒後開始...");
   }
   
   $("button[data-role=go]").bind("click", function() {

@@ -3,11 +3,15 @@ from itertools import ifilter
 import csv
 
 from django.core.urlresolvers import reverse
+from django.utils.timezone import now, timedelta
+
 from thief.rest import ThiefREST, ThiefRestAPI
 from thief.vendors import ProductOverview, GoogleImageSearch
 from thief.vendors import get_vendor
 from thief.products.models import Product, ProductReference
 from thief.products.forms import ProductReference as ProductReferenceForm
+
+current_local_time_str = lambda: (now() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
 
 class search_product(ThiefREST):
 	template = 'search_product.html'
@@ -49,7 +53,7 @@ class batch_import(ThiefREST):
         f = request.FILES.get('csv_file')
         reader = csv.reader(f)
         mi, gi = self.find_clumn_index(reader.next())
-        data = [{'t': r[mi].decode("big5", "ignore"), 'g': r[gi].decode("big5", "ignore")}
+        data = [{'t': r[mi].decode("big5", "ignore"), 'g': r[gi].decode("big5", "ignore"), 'p': ''}
                     for r in ifilter(lambda i: i[mi], reader)]
                     
         return {'data': data}
@@ -68,7 +72,8 @@ class import_item(ThiefRestAPI):
         
     def post(self, request):
         model_id = request.POST.get('model_id')
-        group = request.POST.get('group')
+        group = request.POST.get('group', '')
+        price = request.POST.get('price')
         
         rakuten_vendor = get_vendor('rakuten')()
         rakuten = rakuten_vendor.search(model_id)[-1][0]
@@ -80,7 +85,8 @@ class import_item(ThiefRestAPI):
         
         product = Product(title=rakuten.title, model_id=model_id, group=group, jan=jan,
             release_date=amazon.release_date or rakuten.release_date, weight=amazon.weight,
-            size=amazon.size, summary="", color="", details="", usage_status="")
+            size=amazon.size, price=price, summary="", color="", details="",
+            created_at=current_local_time_str)
         product.save()
         
         self.write_ref(product, rakuten)
