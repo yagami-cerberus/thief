@@ -12,7 +12,8 @@ class AuctionTypeNoForm(forms.Form):
 
 class AuctionConfigsForm(forms.Form):
 	goods_location = forms.CharField(label='\xe7\x89\xa9\xe5\x93\x81\xe6\x89\x80\xe5\x9c\xa8\xe5\x9c\xb0', required=False)
-	auction_duration = forms.IntegerField(label='\xe6\x8b\x8d\xe8\xb3\xa3\xe6\x9c\x9f\xe9\x96\x93', required=False)
+	
+    auction_duration = forms.IntegerField(label='\xe6\x8b\x8d\xe8\xb3\xa3\xe6\x9c\x9f\xe9\x96\x93', required=False)
 	auction_end_at = forms.IntegerField(label='\xe7\xb5\x90\xe6\x9d\x9f\xe6\x99\x82\xe9\x96\x93', required=False)
 	auto_expend = forms.NullBooleanField(label='\xe8\x87\xaa\xe5\x8b\x95\xe5\xbb\xb6\xe9\x95\xb7', required=False)
 	reopen_amount = forms.IntegerField(label='\xe9\x87\x8d\xe6\x96\xb0\xe5\x88\x8a\xe7\x99\xbb\xe6\xac\xa1\xe6\x95\xb8', required=False)
@@ -38,6 +39,7 @@ class AuctionConfigsForm(forms.Form):
     
 	amount = forms.IntegerField(label='\xe6\x95\xb8\xe9\x87\x8f', required=False)
 	usage_status = forms.CharField(label='\xe7\x89\xa9\xe5\x93\x81\xe6\x96\xb0\xe8\x88\x8a', max_length=255, required=False)
+    made_at = forms.CharField(label='\xe7\x94\xa2\xe5\x9c\xb0', required=False)
     
 	yahoo_image_url_prefix = forms.CharField(label='yahoo\xe5\x9c\x96\xe7\x89\x87\xe7\xb6\xb2\xe5\x9d\x80prefix', required=False)
 	ruten_image_url_prefix = forms.CharField(label='ruten\xe5\x9c\x96\xe7\x89\x87\xe7\xb6\xb2\xe5\x9d\x80prefix', required=False)
