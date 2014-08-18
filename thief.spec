@@ -5,7 +5,7 @@ a = Analysis(['.\\manage.py'],
                 'django.test',
                 'django.utils.six',
                 'thief.auction.templatetags',
-                'thief.auction.templatetags.keywords'
+                'thief.auction.templatetags.keywords',
                 'thief.bootstrap3.templatetags',
                 'thief.bootstrap3.templatetags.bootstrap3',
                 'thief.vendors.management.commands.vendor',
