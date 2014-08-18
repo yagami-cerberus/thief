@@ -4,6 +4,8 @@ a = Analysis(['.\\manage.py'],
              hiddenimports=[
                 'django.test',
                 'django.utils.six',
+                'thief.auction.templatetags',
+                'thief.auction.templatetags.keywords'
                 'thief.bootstrap3.templatetags',
                 'thief.bootstrap3.templatetags.bootstrap3',
                 'thief.vendors.management.commands.vendor',
