@@ -89,6 +89,11 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "thief", "static"), )
+
+STATICFILES_FINDERS = ("django.contrib.staticfiles.finders.FileSystemFinder",
+ "django.contrib.staticfiles.finders.AppDirectoriesFinder")
+
 AWS_ACCESS_KEY = config["AWS_ACCESS_KEY"]
 AWS_SECRET_KEY = config["AWS_SECRET_KEY"]
 AWS_ASSOCITATE_TAG = config["AWS_ASSOCITATE_TAG"]

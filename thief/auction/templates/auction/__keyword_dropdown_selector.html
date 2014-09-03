@@ -6,7 +6,7 @@
 <button type="button" class="btn btn-default {% if small %}btn-sm{% endif %} dropdown-toggle" data-toggle="dropdown" tabindex="-1">
   <span style="color:white">.</span><span class="caret"></span>
 </button>
-<ul class="dropdown-menu" role="menu">
+<ul class="dropdown-menu dropdown-menu-shift" role="menu">
   {% for g in keyword_groups %}
     <li><a href="javascript:void(0)" data-role="kw-selector-{{ identify }}">{{ g }}</a></li>
   {% endfor %}
