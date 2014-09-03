@@ -86,7 +86,7 @@ class import_item(ThiefRestAPI):
         product = Product(title=rakuten.title, model_id=model_id, group=group, jan=jan,
             release_date=amazon.release_date or rakuten.release_date, weight=amazon.weight,
             size=amazon.size, price=price, summary="", color="", details="",
-            created_at=current_local_time_str)
+            created_at=current_local_time_str())
         product.save()
         
         self.write_ref(product, rakuten)
