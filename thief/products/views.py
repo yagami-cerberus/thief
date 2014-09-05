@@ -33,7 +33,16 @@ class products(ThiefREST):
     
     # List
     def get(self, request):
-        return {'products': Product.objects.order_by('title').all()}
+        q = request.GET.get("q")
+        
+        query = Product.objects
+        if q:
+            query = (query.filter(title__contains=q) |
+                     query.filter(group__contains = q) |
+                     query.filter(release_date = q) |
+                     query.filter(group__contains = q))
+        
+        return {'products': query.order_by('title'), 'q': request.GET.get("q"), 'g': request.GET.get("g")}
     
     # Create
     def post(self, request):

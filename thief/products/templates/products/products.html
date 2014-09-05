@@ -3,5 +3,34 @@
 {% block main %}
 <h3>產品清單</h3>
 <hr />
+<div class="container">
+  <div class="row">
+    <div class="col-sm-8">
+      <form class="form-inline" role="form">
+        <input type="text" name="q" placeholder="搜尋: 廠牌/型號/發售日/群組" class="form-control input-sm" value="{{ q|default:"" }}" style="min-width: 200px" />
+        <button type="submit" class="btn btn-sm btn-default" />搜尋</button>
+      </form>
+    </div>
+    <div class="col-sm-4 text-right">
+      <div class="btn-group products_fn">
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            下載
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-shift" role="menu">
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:{}" data-url="{% url 'download_products_csv' 'yahoo' %}">Yahoo</a></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:{}" data-url="{% url 'download_products_csv' 'ruten' %}">露天拍賣</a></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="javascript:{}" data-url="{% url 'download_products_csv' 'rakuten' %}">樂天</a></li>
+          </ul>
+        </div>
+        <div class="btn btn-danger" data-url="{% url 'products' %}" data-confirm="您確定要刪除選擇的產品？這個動作將無法復原。" data-method="delete">
+          刪除
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
 {% include 'products/_products.html' with products=products %}
 {% endblock %}
