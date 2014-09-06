@@ -2,3 +2,7 @@ ul.dropdown-menu-shift {
     right: 0 !important;
     margin-left: auto !important;
 }
+
+thead a {
+    color: #333;
+}

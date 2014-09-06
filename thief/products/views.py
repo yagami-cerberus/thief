@@ -30,19 +30,34 @@ current_local_time_str = lambda: (now() + timedelta(hours=8)).strftime("%Y-%m-%d
 
 class products(ThiefREST):
     template = 'products/products.html'
+    order_list = ['title', 'model_id', 'release_date', 'price', 'created_at']
     
     # List
     def get(self, request):
         q = request.GET.get("q")
+        o = request.GET.get("o", "0")
         
-        query = Product.objects
+        query = Product.objects.all()
         if q:
             query = (query.filter(title__contains=q) |
                      query.filter(group__contains = q) |
                      query.filter(release_date = q) |
                      query.filter(group__contains = q))
         
-        return {'products': query.order_by('title'), 'q': request.GET.get("q"), 'g': request.GET.get("g")}
+        try:
+            order_index = int(o)
+            
+            if o.startswith("-"):
+                query = query.order_by("-%s" % self.order_list[order_index])
+            else:
+                query = query.order_by(self.order_list[order_index])
+                
+        except (ValueError, IndexError):
+            query = query.order('title')
+            o = "0"
+        
+        return {'products': query, 'q': request.GET.get("q"), 'g': request.GET.get("g"),
+            'o': o, 'order_reference': self.order_list}
     
     # Create
     def post(self, request):
