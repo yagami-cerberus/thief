@@ -3,7 +3,9 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th style="width: 30px"></th>
+        <th style="width: 30px">
+          <input type="checkbox" id="select_all"/>
+        </th>
         {% orderheader title %}<th><a href="?{{ url }}">廠牌 {{ icon }}</a></th>{% endorderheader %}
         {% orderheader model_id %}<th><a href="?{{ url }}">型號 {{ icon }}</a></th>{% endorderheader %}
         {% orderheader release_date %}<th><a href="?{{ url }}">發售日 {{ icon }}</a></th>{% endorderheader %}
@@ -29,6 +31,18 @@
 </form>
 <script type="text/javascript">
 $(function() {
+  function cleanTextSelection() {
+    if (window.getSelection) {
+      if (window.getSelection().empty) {  // Chrome
+        window.getSelection().empty();
+      } else if (window.getSelection().removeAllRanges) {  // Firefox
+        window.getSelection().removeAllRanges();
+      }
+    } else if (document.selection) {  // IE?
+      document.selection.empty();
+    }
+  }
+  
   $("[data-url]", ".products_fn").bind("click", function() {
     var $f = $("#products_form");
     var $self = $(this);
@@ -51,6 +65,36 @@ $(function() {
         .appendTo($f);
     };
     $f.submit();
+  });
+  
+  var $record_rows = $("form#products_form tbody tr");
+  $record_rows.bind("click", function(e) {
+    if(e.shiftKey) {
+      var p1 = $record_rows.filter("._active").index();
+      var p2 = $(this).index();
+      
+      $selected = $record_rows.slice(Math.min(p1, p2), Math.max(p1, p2) + 1);
+      $selected.addClass("warning");
+      $("input[type=checkbox]", $selected).prop('checked', true);
+      cleanTextSelection();
+
+      $record_rows.removeClass("_active");
+      $(this).addClass("_active");
+    }
+    else if(e.altKey) {
+      $record_rows.removeClass("_active");
+      $(this).addClass("warning _active");
+      $("input[type=checkbox]", $(this)).prop('checked', true);
+    }
+    else {
+      $record_rows.removeClass("warning _active");
+      $(this).addClass("warning _active");
+    }
+    
+  });
+  
+  $("form#products_form #select_all").bind("change", function() {
+    $("form#products_form tbody input[type=checkbox]").prop("checked", this.checked).trigger("change");
   });
 });
 </script>
