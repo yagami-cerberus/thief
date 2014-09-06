@@ -69,7 +69,7 @@ $(function() {
     $keywords = $("#keywords-tmpl").tmpl({keywords: kw});
     $keywords.insertAfter($input);
     $("label", $keywords).bind("click", function() {
-      $input.val($input.val() + ' ' + this.innerText);
+      $input.val($input.val() + ' ' + $(this).text());
     });
     
     // ==================

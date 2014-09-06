@@ -40,7 +40,7 @@ class Keyword(models.Model):
 
     @classmethod
     def get_groups(cls):
-        kw_groups = {item[0] for item in Keyword.objects.annotate(c=models.Count('group')).values_list('group')}
+        kw_groups = {item[0] for item in Keyword.objects.exclude(group='').annotate(c=models.Count('group')).values_list('group')}
         kw_groups = kw_groups.union(
             {item[0] for item in KeywordSet.objects.annotate(c=models.Count('group')).values_list('group')}
         )
@@ -52,5 +52,5 @@ class KeywordSet(models.Model):
 
     @classmethod
     def get_groups(cls):
-         return {item[0] for item in cls.objects.annotate(c=models.Count('group')).values_list('group')}
+         return {item[0] for item in cls.objects.exclude(group='').annotate(c=models.Count('group')).values_list('group')}
     
