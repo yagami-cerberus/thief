@@ -143,7 +143,8 @@ class edit_product(ThiefREST):
         })
     
     def update_keyword_set(self, product):
-        KeywordSet.objects.get_or_create(set=product.keywords, group=product.group)
+        if product.keywords.strip() and product.group.strip():
+            KeywordSet.objects.get_or_create(set=product.keywords, group=product.group)
     
     def get(self, request, id):
         product = Product.objects.get(id=id)

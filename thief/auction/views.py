@@ -61,9 +61,10 @@ class keyword_groups(ThiefREST):
         return {'groups': Keyword.get_groups()}
         
     def post(self, request):
-        group = request.POST.get('g')
-        keyword = request.POST.get('k')
-        m = Keyword.objects.get_or_create(group=group, keyword=keyword)
+        group = request.POST.get('g').strip()
+        keyword = request.POST.get('k').strip()
+        if group and keyword:
+            m = Keyword.objects.get_or_create(group=group, keyword=keyword)
         return redirect(reverse('auction_keywords', args=(group, )))
     
     def delete(self, request):

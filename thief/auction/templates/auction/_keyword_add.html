@@ -1,8 +1,8 @@
 {% load keywords %}
 {% load_keyword_groups %}
-<form role="form" class="form-inline" method="post" action="{% url 'auction_keyword_groups' %}" id="keyword-add">{% csrf_token %}
+<form id="create_keyword_form" role="form" class="form-inline" method="post" action="{% url 'auction_keyword_groups' %}" id="keyword-add">{% csrf_token %}
   <div class="form-group">
-    <label class="sr-only" for="k">品項</label>
+    <label class="sr-only" for="k">群組</label>
     <div class="input-group">
       <input type="text" name="g" class="form-control input-sm" placeholder="群組" value="{{ group }}" />
       <div class="input-group-btn">
@@ -16,3 +16,16 @@
   </div>
   <button class="btn btn-success btn-sm" type="submit">新增</button>
 </form>
+<script>
+$(function() {
+  $("form#create_keyword_form").bind("submit", function() {
+    if(!$("input[name=g]", $(this)).val().trim()) {
+      alert("請輸入群組");
+      return false;
+    } else if(!$("input[name=k]", $(this)).val().trim()) {
+      alert("請輸入關鍵字");
+      return false;
+    }
+  });
+});
+</script>
