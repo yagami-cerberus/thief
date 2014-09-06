@@ -12,7 +12,7 @@ def modify_title(meta):
     summary = meta.get('summary') or ''
     keywords = meta.get('keywords') or ''
     made_at = meta.get('made_at') or ''
-    return ' '.join((title, model_id, summary, keywords, made_at)).encode("big5", "ignore"))
+    return ' '.join((title, model_id, summary, keywords, made_at)).encode("big5", "ignore")
 
 class BaseRule(object):
     BOOLEAN_FIELDS = []
