@@ -30,7 +30,7 @@ current_local_time_str = lambda: (now() + timedelta(hours=8)).strftime("%Y-%m-%d
 
 class products(ThiefREST):
     template = 'products/products.html'
-    order_list = ['title', 'model_id', 'release_date', 'price', 'created_at']
+    order_list = ['manufacturer', 'model_id', 'release_date', 'price', 'created_at']
     
     # List
     def get(self, request):
@@ -39,7 +39,7 @@ class products(ThiefREST):
         
         query = Product.objects.all()
         if q:
-            query = (query.filter(title__contains=q) |
+            query = (query.filter(manufacturer__contains=q) |
                      query.filter(group__contains = q) |
                      query.filter(release_date = q) |
                      query.filter(group__contains = q))
@@ -53,7 +53,7 @@ class products(ThiefREST):
                 query = query.order_by(self.order_list[order_index])
                 
         except (ValueError, IndexError):
-            query = query.order('title')
+            query = query.order('manufacturer')
             o = "0"
         
         return {'products': query, 'q': request.GET.get("q"), 'g': request.GET.get("g"),
@@ -62,10 +62,13 @@ class products(ThiefREST):
     # Create
     def post(self, request):
         v_product = ProductOverview.from_dict({key: request.POST[key] for key in request.POST})
-        product = Product(title=v_product.title, jan=v_product.jan, release_date=v_product.release_date,
+        product = Product(manufacturer=v_product.manufacturer, jan=v_product.jan, release_date=v_product.release_date,
             weight=v_product.weight, size=v_product.size,
             created_at=current_local_time_str())
-
+        
+        if product.model_id:
+            product.model_id = product.model_id.upper()
+        
         keyword = request.POST.get('keyword')
         if keyword: product.model_id = keyword
         
@@ -115,7 +118,7 @@ class prepare_product(product):
         
     def google_img(self, product):
         gis = GoogleImageSearch()
-        is_cache, gis_images = gis.search(product.title)
+        is_cache, gis_images = gis.search(' '.join([product.manufacturer, product.model_id]))
         if len(gis_images) > 0:
             product.fetch_image_from_url(gis_images[0].url)
             return HttpResponse("true", content_type="application/json")
@@ -170,7 +173,7 @@ class edit_image(ThiefREST):
     def get(self, request, id):
         product = Product.objects.get(id=id)
         gis = GoogleImageSearch()
-        is_cache, gis_images = gis.search(product.title)
+        is_cache, gis_images = gis.search(' '.join([product.manufacturer, product.model_id]))
         
         return {'p': product, 'gis': gis_images}
     

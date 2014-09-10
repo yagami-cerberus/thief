@@ -7,7 +7,7 @@ import os
 from django.conf import settings
 
 def modify_title(meta):
-    title = meta.get('title') or ''
+    title = meta.get('manufacturer') or ''
     model_id = meta.get('model_id') or ''
     summary = meta.get('summary') or ''
     keywords = meta.get('keywords') or ''

@@ -6,7 +6,7 @@
         <th style="width: 30px">
           <input type="checkbox" id="select_all"/>
         </th>
-        {% orderheader title %}<th><a href="?{{ url }}">廠牌 {{ icon }}</a></th>{% endorderheader %}
+        {% orderheader manufacturer %}<th><a href="?{{ url }}">廠牌 {{ icon }}</a></th>{% endorderheader %}
         {% orderheader model_id %}<th><a href="?{{ url }}">型號 {{ icon }}</a></th>{% endorderheader %}
         {% orderheader release_date %}<th><a href="?{{ url }}">發售日 {{ icon }}</a></th>{% endorderheader %}
         {% orderheader price %}<th><a href="?{{ url }}">價格 {{ icon }}</a></th>{% endorderheader %}
@@ -18,7 +18,7 @@
       {% for p in products %}
         <tr>
           <td><input type="checkbox" id="p_{{ p.id }}" name="p" value="{{ p.id }}" /></td>
-          <td><label for="p_{{ p.id }}">{{ p.title }}</label></td>
+          <td><label for="p_{{ p.id }}">{{ p.manufacturer }}</label></td>
           <td>{{ p.model_id|default:"" }}</td>
           <td>{{ p.release_date|default:"" }}</td>
           <td>{{ p.price|default:"" }}</td>

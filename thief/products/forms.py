@@ -6,7 +6,7 @@ from thief.auction.forms import KeywordGroupWidget
 class Product(forms.ModelForm):
     class Meta:
         model = models.Product
-        fields = ['title', 'model_id', 'group', 'jan', 'release_date',
+        fields = ['manufacturer', 'model_id', 'group', 'jan', 'release_date',
             'keywords', 'summary', 'size', 'weight', 'price', 'color',
             'details', 'created_at']
         exclude = ('product', 'vendor', 'item_id', 'source_price', 'source_currency')

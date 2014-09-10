@@ -78,10 +78,6 @@ def get_size(r):
     
     return '%sx%sx%s %s' % (th, tl, tw, tu)
 
-@ignore_attribute_error
-def get_manufacturer(r):
-    return r.ItemAttributes.Manufacturer
-
 class Amazon(VendorBase):
     vendor_name = "amazon"
     
@@ -101,7 +97,8 @@ class Amazon(VendorBase):
             price=get_price(r),
             release_date=get_release_date(r),
             weight=get_weight(r),
-            size=get_size(r)
+            size=get_size(r),
+            manufacturer=get_manufacturer(r)
         )
     
     def _details(self, item_id):

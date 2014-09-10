@@ -83,10 +83,11 @@ class import_item(ThiefRestAPI):
         
         jan = rakuten_vendor.fetch_jan(rakuten.url)
         
-        product = Product(title=rakuten.title, model_id=model_id, group=group, jan=jan,
+        if model_id: model_id = model_id.upper()
+        product = Product(manufacturer=amazon.manufacturer, model_id=model_id, group=group,
             release_date=amazon.release_date or rakuten.release_date, weight=amazon.weight,
             size=amazon.size, price=price, summary="", color="", details="",
-            created_at=current_local_time_str())
+            jan=jan, created_at=current_local_time_str())
         product.save()
         
         self.write_ref(product, rakuten)

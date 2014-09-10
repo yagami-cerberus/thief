@@ -1,6 +1,6 @@
 {% extends 'foundation.html' %}
 {% load bootstrap3 %}
-{% block title %}產品: {{ p.title }} {% endblock title %}
+{% block title %}產品: {{ p.manufacturer }} {{ p.model_id }} {% endblock title %}
 {% block main %}
 <style type="text/css">
 div.keywords {
@@ -18,7 +18,7 @@ label.keyword:hover {
 }
 
 </style>
-<h3>產品: {{ p.title }}</h3>
+<h3>編輯產品</h3>
 <hr />
 <div class="container">
   <h4>拍賣資料</h4>

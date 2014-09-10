@@ -1,5 +1,5 @@
 {% extends 'foundation.html' %}
-{% block title %}產品: {{ p.title }} {% endblock title %}
+{% block title %}產品: {{ p.manufacturer }} {{ p.model_id }} {% endblock title %}
 {% block main %}
 <style>
 .image-cell {
@@ -32,7 +32,7 @@
   max-height: 160px;
 }
 </style>
-<h3>產品: {{ p.title }}</h3>
+<h3>產品: {{ p.manufacturer }} {{ p.model_id }}</h3>
 <hr />
 <form action="" method="post" role="form" enctype="multipart/form-data" role="form">{% csrf_token %}
   <div style="float: right;">
@@ -57,7 +57,7 @@
   <div class="container">
     <h4>新增圖片</h4>
     <div class="container">
-      <div><a href="https://www.google.com.tw/search?safe=off&&hl=ja_JP&tbm=isch&q={{ p.model_id }}" target="_blank">Google Search</a></div>
+      <div><a href="https://www.google.com.tw/search?safe=off&&hl=ja_JP&tbm=isch&q={{ p.manufacturer }}%20{{ p.model_id }}" target="_blank">Google Search</a></div>
       <label>手動上傳圖片</label>
       <input type="file" name="files" multiple="" accept="image/*" >
       <hr />

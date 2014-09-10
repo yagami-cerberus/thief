@@ -8,7 +8,7 @@ import urllib2
 from thief.auction.models import YahooProductNo, RutenProductNo, RakutenProductNo
 
 class Product(models.Model):
-    title = models.CharField('\xe5\xbb\xa0\xe7\x89\x8c', max_length=1024, null=False)
+    manufacturer = models.CharField('\xe5\xbb\xa0\xe7\x89\x8c', max_length=1024, null=False)
     
     model_id = models.CharField('\xe5\x9e\x8b\xe8\x99\x9f', max_length=255, null=True)
     group = models.CharField('\xe7\xbe\xa4\xe7\xb5\x84', max_length=255, null=True)
@@ -27,15 +27,6 @@ class Product(models.Model):
     
     created_at = models.CharField('\xe4\xb8\x8a\xe5\x82\xb3\xe6\x99\x82\xe9\x96\x93', max_length=50, null=True, blank=True)
     
-    # TODO: This method is broken and going to be removed.
-    @classmethod
-    def import_from(cls, data):
-        p = Product(vendor=data.get('vendor', 'unknow'), item_id='',
-            title=data.get('title') or 'No title', url='', source_price=data.get('target_price'),
-            summary=data.get('summary'), color=data.get('color'), details=data.get('details'))
-        p.save()
-        return p
-        
     def fetch_image_from_url(self, url):
         if not (url.startswith('http://') or url.startswith('https://')):
             return
@@ -62,7 +53,7 @@ class Product(models.Model):
         
     def export(self):
         data = {
-            'title': self.title,
+            'manufacturer': self.manufacturer,
             'model_id': self.model_id,
             'keywords': self.keywords,
             'summary': self.summary,
@@ -91,7 +82,7 @@ class Product(models.Model):
         return data, attach_files
     
     def __str__(self):
-        return "%i#%s" % (self.pk, self.title)
+        return "%i#[%s] %s" % (self.pk, self.manufacturer, self.model_id)
 
 class ProductReference(models.Model):
     product = models.ForeignKey(Product, null=False)
