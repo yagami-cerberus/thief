@@ -66,9 +66,6 @@ class products(ThiefREST):
             weight=v_product.weight, size=v_product.size,
             created_at=current_local_time_str())
         
-        if product.model_id:
-            product.model_id = product.model_id.upper()
-        
         keyword = request.POST.get('keyword')
         if keyword: product.model_id = keyword
         
@@ -167,7 +164,6 @@ class edit_product(ThiefREST):
         form = forms.Product(request.POST, instance=product)
         
         if form.is_valid():
-            if product.model_id: product.model_id = product.model_id.upper()
             form.save()
             self.update_keyword_set(product)
             return redirect(reverse('product', args=(product.id, )))

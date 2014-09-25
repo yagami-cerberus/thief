@@ -81,6 +81,10 @@ class Product(models.Model):
 
         return data, attach_files
     
+    def save(self):
+        if self.model_id: self.model_id = self.model_id.upper()
+        models.Model.save(self)
+        
     def __str__(self):
         return "%i#[%s] %s" % (self.pk, self.manufacturer, self.model_id)
 
