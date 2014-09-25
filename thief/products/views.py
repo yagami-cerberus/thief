@@ -122,7 +122,6 @@ class prepare_product(ThiefREST):
         is_cache, gis_images = gis.search(' '.join([product.manufacturer, product.model_id]))
         if len(gis_images) > 0:
             for gis_image in gis_images:
-                print(">>>> " + gis_image.url)
                 if gis_image.url.startswith("http://") or gis_image.url.startswith("https://"):
                     product.fetch_image_from_url(gis_image.url)
                     return HttpResponse("true", content_type="application/json")
