@@ -25,7 +25,7 @@
 <div class="alert alert-warning">注意：開始批次上傳後關閉本頁面將會中斷批次上傳作業</div>
 <table class="table table-striped">
   <thead>
-    <tr><th>型號</th><th>群組</th><th>價格</th><th style="width: 100px"></th></tr>
+    <tr><th>型號</th><th>品項</th><th>價格</th><th style="width: 100px"></th></tr>
   </thead>
   <tbody>
     {% for r in data %}
@@ -44,14 +44,16 @@
 <form style="display: none;" method="post" id="create_form">{% csrf_token %}
   <input type="hidden" name="model_id" />
   <input type="hidden" name="group" />
+  <input type="hidden" name="price" />
 </form>
 <script type="text/javascript">
 $(function() {
-  function make_request(model_id, group, $element) {
+  function make_request(model_id, group, price, $element) {
     var $f = $("form#create_form");
     $("[name=model_id]", $f).val(model_id);
     $("[name=group]", $f).val(group);
-    
+    $("[name=price]", $f).val(price);
+
     $("[data-role=st]", $element).text("處理中...");
     $.ajax("{% url 'vendor_import_item' 'json' %}", {type: "post", dataType:"json",
       data: $f.serialize(), success: function(result) {
@@ -70,7 +72,7 @@ $(function() {
     if(index >= $rows.length) return;
     
     var $row = $($rows[index]);
-    make_request($row.attr("data-type"), $row.attr("data-group"), $row);
+    make_request($row.attr("data-type"), $row.attr("data-group"), $row.attr("data-price"), $row);
     
     setTimeout(function() {
       working_thread($rows, index + 1);

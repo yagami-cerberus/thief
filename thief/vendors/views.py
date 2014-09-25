@@ -43,8 +43,10 @@ class batch_import(ThiefREST):
                 mi = i
             if name.decode("big5", "ignore") == u'\u54c1\u9805':
                 gi = i
-        
-        return mi, gi
+            if name.decode("big5", "ignore") == u'\u50f9\u683c':
+                pi = i
+
+        return mi, gi, pi
     
     def get(self, request):
 		return {}
@@ -52,8 +54,8 @@ class batch_import(ThiefREST):
     def post(self, request):
         f = request.FILES.get('csv_file')
         reader = csv.reader(f)
-        mi, gi = self.find_clumn_index(reader.next())
-        data = [{'t': r[mi].decode("big5", "ignore"), 'g': r[gi].decode("big5", "ignore"), 'p': ''}
+        mi, gi, pi = self.find_clumn_index(reader.next())
+        data = [{'t': r[mi].decode("big5", "ignore"), 'g': r[gi].decode("big5", "ignore"), 'p': r[pi].decode("big5", "ignore")}
                     for r in ifilter(lambda i: i[mi], reader)]
                     
         return {'data': data}

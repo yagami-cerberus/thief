@@ -8,7 +8,7 @@ from thief.auction import models
 
 class AuctionTypeNoForm(forms.Form):
     no = forms.CharField(max_length=256, label="\xe4\xbb\xa3\xe7\xa2\xbc")
-    title = forms.CharField(max_length=1024, label="\xe7\xbe\xa4\xe7\xb5\x84")
+    title = forms.CharField(max_length=1024, label="\xe5\x93\x81\xe9\xa0\x85")
 
 class AuctionConfigsForm(forms.Form):
     goods_location = forms.CharField(label='\xe7\x89\xa9\xe5\x93\x81\xe6\x89\x80\xe5\x9c\xa8\xe5\x9c\xb0', required=False)
