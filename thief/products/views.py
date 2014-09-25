@@ -102,9 +102,13 @@ class product(ThiefREST):
         product = Product.objects.get(id=id)
         return {'p': product}
 
-class prepare_product(product):
+class prepare_product(ThiefREST):
     template = 'products/prepare_product.html'
     
+    def get(self, request, id):
+        product = Product.objects.get(id=id)
+        return {'p': product}
+
     def post(self, request, id):
         product = Product.objects.get(id=id)
         action = request.POST.get("job")
@@ -120,8 +124,11 @@ class prepare_product(product):
         gis = GoogleImageSearch()
         is_cache, gis_images = gis.search(' '.join([product.manufacturer, product.model_id]))
         if len(gis_images) > 0:
-            product.fetch_image_from_url(gis_images[0].url)
-            return HttpResponse("true", content_type="application/json")
+            for gis_image in gis_images:
+                print(">>>> " + gis_image.url)
+                if gis_image.url.startswith("http://") or gis_image.url.startswith("https://"):
+                    product.fetch_image_from_url(gis_image.url)
+                    return HttpResponse("true", content_type="application/json")
         else:
             return HttpResponse("false", content_type="application/json")
 
@@ -133,8 +140,7 @@ class prepare_product(product):
                     product.jan = jan
                     product.save()
                     return HttpResponse("true", content_type="application/json")
-                else:
-                    return HttpResponse("false", content_type="application/json")
+        return HttpResponse("false", content_type="application/json")
     
 class edit_product(ThiefREST):
     template = 'products/edit.html'
