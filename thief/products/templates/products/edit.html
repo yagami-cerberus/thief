@@ -55,6 +55,9 @@ $(function() {
   var $keywords = undefined;
   
   $input.attr("autocomplete", "off");
+  $input.bind("focus", function() {
+    $input.autocomplete("search", $input.val());
+  });
   
   $group.bind("change", function() {
     if($keywords) $keywords.remove();
@@ -79,7 +82,8 @@ $(function() {
     }
     
     $input.autocomplete({
-      source: kw_sets
+      source: kw_sets,
+      minLength: 0
     });
   }).trigger("change");
 });

@@ -159,9 +159,9 @@ class edit_product(ThiefREST):
     def post(self, request, id):
         product = Product.objects.get(id=id)
         form = forms.Product(request.POST, instance=product)
-        product.model_id = product.model_id.upper()
         
         if form.is_valid():
+            if product.model_id: product.model_id = product.model_id.upper()
             form.save()
             self.update_keyword_set(product)
             return redirect(reverse('product', args=(product.id, )))
