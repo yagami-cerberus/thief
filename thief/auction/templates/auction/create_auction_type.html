@@ -4,14 +4,13 @@
 {% block main %}
 <h3>新增 {{ cls.brand }} 類別代號</h3>
 <hr />
-<div class="container">
+<div class="col-lg-4 col-sm-6">
   <form action="" method="post" class="form-account" role="form">{% csrf_token %}
     {{ form|bootstrap_form:"default" }}
-  
+
     <div class="form-actions text-align-right">
       <input type="submit" name="login" class="btn btn-primary" value="新增"></input>
     </div>
   </form>
 </div>
-
 {% endblock %}

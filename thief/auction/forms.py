@@ -6,9 +6,25 @@ from django import forms
 
 from thief.auction import models
 
+class KeywordGroupWidget(forms.TextInput):
+    def render(self, name, value, attrs=None):
+        if not attrs: attrs = {}
+        id = get_random_string(8)
+        attrs['data-kgw-id'] = id
+        input = super(KeywordGroupWidget, self).render(name, value, attrs)
+        
+        t = get_template("auction/__keyword_dropdown_selector.html")
+        return t.render(Context({
+            'keyword_groups': models.Keyword.get_groups(),
+            'input': input,
+            'input_selector': 'input[data-kgw-id=%s]' % (id, ),
+            'identify': get_random_string(6)}))
+        
+        return format_html(output)
+
 class AuctionTypeNoForm(forms.Form):
     no = forms.CharField(max_length=256, label="\xe4\xbb\xa3\xe7\xa2\xbc")
-    title = forms.CharField(max_length=1024, label="\xe5\x93\x81\xe9\xa0\x85")
+    title = forms.CharField(max_length=1024, label="\xe5\x93\x81\xe9\xa0\x85", widget=KeywordGroupWidget)
 
 class AuctionConfigsForm(forms.Form):
     goods_location = forms.CharField(label='\xe7\x89\xa9\xe5\x93\x81\xe6\x89\x80\xe5\x9c\xa8\xe5\x9c\xb0', required=False)
@@ -44,19 +60,3 @@ class AuctionConfigsForm(forms.Form):
     yahoo_image_url_prefix = forms.CharField(label='yahoo\xe5\x9c\x96\xe7\x89\x87\xe7\xb6\xb2\xe5\x9d\x80prefix', required=False)
     ruten_image_url_prefix = forms.CharField(label='ruten\xe5\x9c\x96\xe7\x89\x87\xe7\xb6\xb2\xe5\x9d\x80prefix', required=False)
     rakuten_image_url_prefix = forms.CharField(label='rakuten\xe5\x9c\x96\xe7\x89\x87\xe7\xb6\xb2\xe5\x9d\x80prefix', required=False)
-
-class KeywordGroupWidget(forms.TextInput):
-    def render(self, name, value, attrs=None):
-        if not attrs: attrs = {}
-        id = get_random_string(8)
-        attrs['data-kgw-id'] = id
-        input = super(KeywordGroupWidget, self).render(name, value, attrs)
-        
-        t = get_template("auction/__keyword_dropdown_selector.html")
-        return t.render(Context({
-            'keyword_groups': models.Keyword.get_groups(),
-            'input': input,
-            'input_selector': 'input[data-kgw-id=%s]' % (id, ),
-            'identify': get_random_string(6)}))
-        
-        return format_html(output)
