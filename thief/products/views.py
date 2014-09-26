@@ -30,7 +30,7 @@ current_local_time_str = lambda: (now() + timedelta(hours=8)).strftime("%Y-%m-%d
 
 class products(ThiefREST):
     template = 'products/products.html'
-    order_list = ['manufacturer', 'model_id', 'release_date', 'price', 'created_at']
+    order_list = ['manufacturer', 'model_id', 'group', 'release_date', 'price', 'created_at']
     
     # List
     def get(self, request):
