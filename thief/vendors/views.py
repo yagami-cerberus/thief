@@ -80,6 +80,9 @@ class import_item(ThiefRestAPI):
         group = request.POST.get('group', '')
         price = request.POST.get('price')
         
+        if not model_id:
+            return {'st': False, 'error': 'No model id given'}
+        
         rakuten_vendor = get_vendor('rakuten')()
         rakuten = rakuten_vendor.search(model_id)[-1][0]
         
@@ -97,4 +100,5 @@ class import_item(ThiefRestAPI):
         self.write_ref(product, rakuten)
         self.write_ref(product, amazon)
         self.fetch_image(product)
+        
         return {'st': True, 'url': reverse('product', args=(product.id, ))}

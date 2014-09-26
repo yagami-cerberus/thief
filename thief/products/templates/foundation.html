@@ -9,6 +9,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script src="//ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+<script src="/static/application.js"></script>
 {% endblock default_js %}{% block default_style %}
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css" />
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
@@ -35,7 +36,7 @@
                     <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a href="{% url 'search' %}">網路產品搜尋</a></li>
+                  <li id="add-product-btn"><a href="javascript:void(0)">網路產品搜尋</a></li>
                   <li><a href="{% url 'vendor_batch_import' %}">上傳 CSV</a></li>
                 </ul>
             </li>
@@ -62,5 +63,31 @@
     {% block main %}{% endblock main %}
   </div>
   {% block footer %}{% endblock footer %}
+  <div class="modal fade" id="add-product-modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title">新增產品</h4>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'vendor_import_item' 'json' %}" method="post" class="form-horizontal">
+            {% csrf_token %}
+            <div class="form-group">
+              <label class="col-sm-3 control-label">型號</label>
+              <div class="col-sm-9">
+                <input type="textbox" class="form-control input-sm" name="model_id" />
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <label class="label label-warning" style="display: none; font-size: 1.0em" data-new-product="status"></label>
+          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary" data-new-product="create-btn">新增</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 </body>
 </html>
