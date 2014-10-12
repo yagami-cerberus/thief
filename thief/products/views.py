@@ -40,6 +40,7 @@ class products(ThiefREST):
         query = Product.objects.all()
         if q:
             query = (query.filter(manufacturer__contains=q) |
+                     query.filter(model_id__contains=q) |
                      query.filter(group__contains = q) |
                      query.filter(release_date = q) |
                      query.filter(group__contains = q))
