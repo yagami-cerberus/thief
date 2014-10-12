@@ -71,9 +71,14 @@ class import_item(ThiefRestAPI):
         is_cache, gis_images = gis.search(product.model_id)
         
         for gis_image in gis_images:
-            if gis_image.url.startswith("http://") or gis_image.url.startswith("https://"):
-                product.fetch_image_from_url(gis_image.url)
-                return
+            if not (gis_image.url.startswith("http://") or gis_image.url.startswith("https://")):
+                continue
+            if gis_image.width < 640 or gis_image.height < 480:
+                continue
+            
+            product.fetch_image_from_url(gis_image.url)
+            return True
+        return False
         
     def post(self, request):
         model_id = request.POST.get('model_id')
