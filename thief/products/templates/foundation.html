@@ -1,3 +1,4 @@
+{% load keywords %}
 <!DOCTYPE html lang="{{ request.LANGUAGE_CODE }}">
 <html><head>
 <meta charset="utf-8">
@@ -73,6 +74,12 @@
         <div class="modal-body">
           <form action="{% url 'vendor_import_item' 'json' %}" method="post" class="form-horizontal">
             {% csrf_token %}
+            <div class="form-group">
+              <label class="col-sm-3 control-label">品項</label>
+              <div class="col-sm-9">
+                {% group_dropdown_selector "group" "" "form-control input-sm" %}
+              </div>
+            </div>
             <div class="form-group">
               <label class="col-sm-3 control-label">型號</label>
               <div class="col-sm-9">

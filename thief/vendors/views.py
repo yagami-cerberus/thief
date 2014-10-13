@@ -79,7 +79,12 @@ class import_item(ThiefRestAPI):
             product.fetch_image_from_url(gis_image.url)
             return True
         return False
-        
+    
+    def guess_keywords(self, p):
+        g = Product.objects.filter(group=p.group, keywords__isnull=False).exclude(id=p.id, keywords="").order_by("-id").first()
+        if g:
+            return g.keywords
+
     def post(self, request):
         model_id = request.POST.get('model_id')
         group = request.POST.get('group', '')
@@ -104,6 +109,8 @@ class import_item(ThiefRestAPI):
             release_date=amazon.release_date or rakuten.release_date, weight=amazon.weight,
             size=amazon.size, price=price, summary="", color="", details="",
             jan=jan, created_at=current_local_time_str())
+        
+        product.keywords = self.guess_keywords(product)
         product.save()
         
         self.write_ref(product, rakuten)

@@ -17,6 +17,7 @@ class KeywordGroupWidget(forms.TextInput):
         return t.render(Context({
             'keyword_groups': models.Keyword.get_groups(),
             'input': input,
+            'small': ("input-sm" in attrs.get("class", "")),
             'input_selector': 'input[data-kgw-id=%s]' % (id, ),
             'identify': get_random_string(6)}))
         
