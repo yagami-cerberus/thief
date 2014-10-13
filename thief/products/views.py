@@ -200,7 +200,6 @@ class edit_image(ThiefREST):
             img.image.delete()
             img.delete()
         
-        # return redirect(reverse('product', args=(product.id, )))
         return redirect(reverse('edit_product_images', args=(product.id, )))
         
 class product_image(ThiefREST):

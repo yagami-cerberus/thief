@@ -88,6 +88,10 @@ class import_item(ThiefRestAPI):
         if not model_id:
             return {'st': False, 'error': 'No model id given'}
         
+        exist_item = Product.objects.filter(model_id=model_id).first()
+        if exist_item:
+            return {'st': False, 'url': reverse('product', args=(exist_item.id, )), 'message': 'ITEM_ALREADY_EXIST'}
+        
         rakuten_vendor = get_vendor('rakuten')()
         rakuten = rakuten_vendor.search(model_id)[-1][0]
         

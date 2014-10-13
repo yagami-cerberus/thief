@@ -1,3 +1,7 @@
+MESSAGE = {
+    ITEM_ALREADY_EXIST: "產品已經存在！"
+};
+
 $(function() {
     $("#add-product-btn").bind("click", function() {
         $("#add-product-modal").modal({
@@ -25,8 +29,10 @@ $(function() {
                 $("a,button,input", $("#add-product-modal")).prop("disabled", false);
                 if(result.st) {
                     window.location = result.url;
-                } else 
-                {
+                } else if(!result.st && result.url && result.message) {
+                    alert(MESSAGE[result.message]);
+                    window.location = result.url;
+                } else {
                     $st.text(result.error);
                 }
             },
@@ -36,17 +42,4 @@ $(function() {
             }
         });
     });
-    // $("[data-role=st]", $element).text("處理中...");
-    // $.ajax("{% url 'vendor_import_item' 'json' %}", {type: "post", dataType:"json",
-    //   data: $f.serialize(), success: function(result) {
-    //     if(result.st)
-    //       $("[data-role=st]", $element)
-    //         .text("")
-    //         .append($("<span>OK</span>"))
-    //         .append($("<a>檢視</a>").attr('href', result.url));
-    //   }, error: function() {
-    //     $("[data-role=st]", $element).text("系統錯誤")
-    //   }
-    // });
-    
 });
