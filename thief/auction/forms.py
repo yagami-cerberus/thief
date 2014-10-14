@@ -6,7 +6,9 @@ from django import forms
 
 from thief.auction import models
 
-class KeywordGroupWidget(forms.TextInput):
+class KeywordGroupWidget(forms.HiddenInput):
+    is_hidden = False
+    
     def render(self, name, value, attrs=None):
         if not attrs: attrs = {}
         id = get_random_string(8)
@@ -15,7 +17,7 @@ class KeywordGroupWidget(forms.TextInput):
         
         t = get_template("auction/__keyword_dropdown_selector.html")
         return t.render(Context({
-            'keyword_groups': models.Keyword.get_groups(),
+            'keyword_groups': [{"id": g, "text": g} for g in models.Keyword.get_groups()],
             'input': input,
             'small': ("input-sm" in attrs.get("class", "")),
             'input_selector': 'input[data-kgw-id=%s]' % (id, ),
