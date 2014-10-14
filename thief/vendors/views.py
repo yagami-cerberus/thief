@@ -61,6 +61,12 @@ class batch_import(ThiefREST):
         return {'data': data}
 
 class import_item(ThiefRestAPI):
+    class Shallow:
+        def __getattr__(self, key):
+            return ""
+    
+    _shallow_result = Shallow()
+    
     def write_ref(self, product, vender_profile):
         ref = ProductReference(product=product)
         ref_f = ProductReferenceForm(vender_profile.to_dict(), instance=ref)
@@ -97,14 +103,24 @@ class import_item(ThiefRestAPI):
         if exist_item:
             return {'st': False, 'url': reverse('product', args=(exist_item.id, )), 'message': 'ITEM_ALREADY_EXIST'}
         
-        rakuten_vendor = get_vendor('rakuten')()
-        rakuten = rakuten_vendor.search(model_id)[-1][0]
+        rakuten = self._shallow_result
+        amazon = self._shallow_result
+        jan = ""
         
-        amazon_vendor = get_vendor('amazon_jp')()
-        amazon = amazon_vendor.search(model_id)[-1][0]
+        try:
+            rakuten_vendor = get_vendor('rakuten')()
+            rakuten = rakuten_vendor.search(model_id)[-1][0]
+            jan = rakuten_vendor.fetch_jan(rakuten.url)
+        except IndexError:
+            pass
         
-        jan = rakuten_vendor.fetch_jan(rakuten.url)
+        try:
+            amazon_vendor = get_vendor('amazon_jp')()
+            amazon = amazon_vendor.search(model_id)[-1][0]
+        except IndexError:
+            pass
         
+        print(amazon.manufacturer.__class__)
         product = Product(manufacturer=amazon.manufacturer, model_id=model_id, group=group,
             release_date=amazon.release_date or rakuten.release_date, weight=amazon.weight,
             size=amazon.size, price=price, summary="", color="", details="",
@@ -113,8 +129,8 @@ class import_item(ThiefRestAPI):
         product.keywords = self.guess_keywords(product)
         product.save()
         
-        self.write_ref(product, rakuten)
-        self.write_ref(product, amazon)
+        if not rakuten == self._shallow_result: self.write_ref(product, rakuten)
+        if not rakuten == self._shallow_result: self.write_ref(product, amazon)
         self.fetch_image(product)
         
         return {'st': True, 'url': reverse('product', args=(product.id, ))}

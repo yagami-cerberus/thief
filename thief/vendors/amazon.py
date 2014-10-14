@@ -1,7 +1,7 @@
 
 import os
 
-from amazonproduct import API, TooManyRequests
+from amazonproduct import API, TooManyRequests, NoExactMatchesFound
 
 from .base import VendorBase, ProductOverview
 
@@ -85,9 +85,12 @@ class Amazon(VendorBase):
         self._api = API(access_key_id=access_key, secret_access_key=secret_key, locale=region)
     
     def _search(self, keyword):
-        raw_results = self._api.item_search('All', Keywords=keyword, AssociateTag='..', ResponseGroup='ItemAttributes,OfferSummary')
-        results = tuple(self.load_overview(r) for r in raw_results)
-        return results
+        try:
+            raw_results = self._api.item_search('All', Keywords=keyword, AssociateTag='..', ResponseGroup='ItemAttributes,OfferSummary')
+            results = tuple(self.load_overview(r) for r in raw_results)
+            return results
+        except NoExactMatchesFound:
+            return ()
     
     def load_overview(self, r):
         return ProductOverview(self.vendor_name, r.ASIN.text,
