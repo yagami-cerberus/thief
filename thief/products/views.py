@@ -49,7 +49,7 @@ class products(ThiefREST):
             order_index = int(o)
             
             if o.startswith("-"):
-                query = query.order_by("-%s" % self.order_list[order_index])
+                query = query.order_by("-%s" % self.order_list[abs(order_index)])
             else:
                 query = query.order_by(self.order_list[order_index])
                 
