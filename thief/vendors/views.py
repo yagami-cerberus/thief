@@ -74,7 +74,7 @@ class import_item(ThiefRestAPI):
         
     def fetch_image(self, product):
         gis = GoogleImageSearch()
-        is_cache, gis_images = gis.search(product.model_id)
+        is_cache, gis_images = gis.search("%s %s" % (product.model_id, manufacturer))
         
         for gis_image in gis_images:
             if not (gis_image.url.startswith("http://") or gis_image.url.startswith("https://")):

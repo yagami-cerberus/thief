@@ -6,6 +6,12 @@ import json
 
 from thief.vendors.models import Cache
 
+"""
+Note:
+    Google search references:
+    https://developers.google.com/custom-search/json-api/v1/using_rest#api-specific_query_parameters
+"""
+
 GOOGLE_END_POINT = "https://www.googleapis.com/customsearch/v1"
 
 class GoogleImageSearch(object):
@@ -19,9 +25,14 @@ class GoogleImageSearch(object):
             "key": self.conf[0],
             "cx": self.conf[1],
             "searchType":"image",
-            "imgSize": "huge",
+            # "imgSize": "huge",
+            "gl": "ja",
+            "hl": "ja-jp",
+            "googlehost": "google.co.jp",
+            "lr": "lang_ja",
             "q": keyword
         })
+        
         req = urllib.urlopen(GOOGLE_END_POINT + "?" + qs)
         return json.load(req)
 
