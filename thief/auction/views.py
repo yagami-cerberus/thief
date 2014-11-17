@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 
 from thief.rest import ThiefREST
 
-from thief.auction.models import YahooProductNo, RutenProductNo, RakutenProductNo, AuctionConfigs, Keyword, KeywordSet
+from thief.auction.models import YahooProductNo, RutenProductNo, RakutenProductNo, AuctionConfigs, Keyword, KeywordSet, Color
 from thief.auction.forms import AuctionTypeNoForm, AuctionConfigsForm
 
 AUCTION_TYPE = {
@@ -87,6 +87,28 @@ class keywords(ThiefREST):
             'keyword_sets': KeywordSet.objects.filter(group=group).order_by('set').all()
         }
 
+class colors(ThiefREST):
+    template = 'auction/colors.html'
+    
+    def get(self, request):
+        return {
+            'colors': Color.objects.all()
+        }
+    
+    def post(self, request):
+        c = Color(name=request.POST.get('name'), symbol=request.POST.get('symbol'))
+        c.save()
+        return redirect(reverse('auction_colors'))
+    
+    def delete(self, request):
+        try:
+            c = Color.objects.get(pk=request.POST.get('pk'))
+            c.delete()
+        except Color.DoesNotExist:
+            pass
+        
+        return redirect(reverse('auction_colors'))
+        
 class auction_types(ThiefREST):
     template = 'auction/auction_types.html'
 

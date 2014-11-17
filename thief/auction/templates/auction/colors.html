@@ -1,0 +1,47 @@
+{% extends 'foundation.html' %}
+{% block title %}商品顏色管理{% endblock title %}
+{% block main %}
+<h3>商品顏色管理</h3>
+<hr />
+<div class="container">
+  <form method="post" action="{% url 'auction_colors' %}">{% csrf_token %}
+    <table class="table table-condensed">
+      <thead>
+        <tr><th>顏色</th><th>代碼</th><th style="width: 150px"></th></tr>
+      </thead>
+      <tbody>
+        {% for c in colors %}
+          <tr>
+            <td>{{ c.name }}</td><td>{{ c.symbol }}</td><td><a href="javascript:void(0)" data-pk="{{ c.pk}}" data-type="kw">刪除</a></td>
+          </tr>
+        {% endfor %}
+        <tr>
+          <td><input type="text" name="name" class="form-control input-sm" placeholder="顏色" /></td>
+          <td><input type="text" name="symbol" class="form-control input-sm" placeholder="代碼" /></td>
+          <td><button class="btn btn-success btn-sm">新增</button></td>
+        <tr>
+      <tbody>
+    </table>
+  </form>
+</div>
+<form method="post" style="display: none" id="delete_form" action="{% url 'auction_colors' %}">{% csrf_token %}
+  <input type="hidden" name="pk" value="" />
+  <input type="hidden" name="__method__" value="delete" />
+</form>
+<script type="text/javascript">
+$(function() {
+  $("a[data-pk][data-type]").bind("click", function() {
+    var $this = $(this);
+    var pk = $this.attr("data-pk");
+    var type = $this.attr("data-type");
+    
+    if(confirm("確定要刪除?")) {
+      var $f = $("#delete_form");
+      $("[name=pk]", $f).val(pk);
+      $("[name=type]", $f).val(type);
+      $f.submit();
+    }
+  });
+});
+</script>
+{% endblock %}

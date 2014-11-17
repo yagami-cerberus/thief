@@ -22,8 +22,20 @@ class KeywordGroupWidget(forms.HiddenInput):
             'small': ("input-sm" in attrs.get("class", "")),
             'input_selector': 'input[data-kgw-id=%s]' % (id, ),
             'identify': get_random_string(6)}))
+
+class MultiColorWidget(forms.SelectMultiple):
+    def render(self, name, value, attrs=None):
+        if not attrs: attrs = {}
+        id = get_random_string(8)
+        attrs['data-kgw-id'] = id
+        input = super(MultiColorWidget, self).render(name, value, attrs,
+             choices=models.Color.objects.values_list("symbol", "name"))
         
-        return format_html(output)
+        t = get_template("auction/__color_multi_selector.html")
+        return t.render(Context({
+            'input': input,
+            'small': ("input-sm" in attrs.get("class", "")),
+            'input_selector': 'select[data-kgw-id=%s]' % (id, )}))
 
 class AuctionTypeNoForm(forms.Form):
     no = forms.CharField(max_length=256, label="\xe4\xbb\xa3\xe7\xa2\xbc")

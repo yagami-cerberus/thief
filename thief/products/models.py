@@ -5,6 +5,8 @@ from os import path
 import urlparse
 import urllib2
 
+from jsonfield import JSONField
+
 from thief.auction.models import YahooProductNo, RutenProductNo, RakutenProductNo
 
 class Product(models.Model):
@@ -25,8 +27,10 @@ class Product(models.Model):
     color = models.CharField('\xe9\xa1\x8f\xe8\x89\xb2', max_length=255, null=True, blank=True)
     details = models.TextField('\xe7\x94\xa2\xe5\x93\x81\xe8\xaa\xaa\xe6\x98\x8e', null=True, blank=True)
     
-    created_at = models.CharField('\xe4\xb8\x8a\xe5\x82\xb3\xe6\x99\x82\xe9\x96\x93', max_length=50, null=True, blank=True)
+    colors_meta = JSONField('\xe5\x95\x86\xe5\x93\x81\xe8\xa6\x8f\xe6\xa0\xbc', null=True, blank=True)
     
+    created_at = models.CharField('\xe4\xb8\x8a\xe5\x82\xb3\xe6\x99\x82\xe9\x96\x93', max_length=50, null=True, blank=True)
+
     def fetch_image_from_url(self, url):
         if not (url.startswith('http://') or url.startswith('https://')):
             return

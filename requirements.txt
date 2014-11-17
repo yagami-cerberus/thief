@@ -2,3 +2,4 @@ Django<1.7
 lxml
 pillow
 python-amazon-product-api==0.2.8
+jsonfield

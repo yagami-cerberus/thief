@@ -53,4 +53,7 @@ class KeywordSet(models.Model):
     @classmethod
     def get_groups(cls):
          return {item[0] for item in cls.objects.exclude(group='').annotate(c=models.Count('group')).values_list('group')}
-    
+
+class Color(models.Model):
+    name = models.CharField(max_length=128, null=False)
+    symbol = models.CharField(max_length=64, null=False)
