@@ -1,10 +1,12 @@
-from tempfile import NamedTemporaryFile
 
 import json
 import csv
 import os
 
+from tempfile import NamedTemporaryFile
 from django.conf import settings
+
+from thief.auction.models import Color
 
 def modify_title(meta):
     title = meta.get('manufacturer') or ''
@@ -155,13 +157,17 @@ class RakutenRule(BaseRule):
         elif field == "default_-1":
             return "-1"
         elif field == "home_catalog":
-            return "\xe9\xa6\x96\xe9\xa0\x81"
+            return u'\u9996\u9801'.encode('big5', 'ignore')
         elif field == "describe":
             if "image_1" in meta:
                 return """<center><img src="%s%s"></center>""" % \
                     (meta.get("rakuten_image_url_prefix", ""), meta['image_1'])
         elif field == "title":
             return modify_title(meta)
+        
+        if field.startswith("product_type_"):
+            val = self.product_type_subhandler(field, meta)
+            return val.encode('big5', 'ignore')
         
         if val:
             if isinstance(val, unicode):
@@ -176,3 +182,18 @@ class RakutenRule(BaseRule):
                 return "%s" % val
         else:
             return ""
+    
+    def product_type_subhandler(self, field, meta):
+        colors = meta['colors']
+        
+        index = int(field.split('_')[3]) - 1
+        
+        if index < len(colors):
+            if field.endswith("_code"):
+                return colors[index]
+            elif field.endswith("_label"):
+                c = Color.objects.filter(symbol=colors[index]).first()
+                if c: return c.name
+            elif field == "product_type_1_0":
+                return u'\u984f\u8272'
+        return ""

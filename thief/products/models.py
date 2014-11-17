@@ -64,7 +64,8 @@ class Product(models.Model):
             'start_price': self.price,
             'target_price': self.price,
             'color': self.color,
-            'details': self.details
+            'details': self.details,
+            'colors': self.colors_meta
         }
         
         data['yahoo_no'] = YahooProductNo.get_no(self.group)
