@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from thief.rest import ThiefREST
 
 from thief.auction.models import YahooProductNo, RutenProductNo, RakutenProductNo, AuctionConfigs, Keyword, KeywordSet, Color
-from thief.auction.forms import AuctionTypeNoForm, AuctionConfigsForm
+from thief.auction import forms
 
 AUCTION_TYPE = {
     'yahoo': YahooProductNo,
@@ -16,18 +16,18 @@ class global_configs(ThiefREST):
     template = 'auction/configs.html'
 
     def get(self, request):
-        form = AuctionConfigsForm({c.key:c.value for c in AuctionConfigs.objects.all()})
+        form = forms.AuctionConfigsForm({c.key:c.value for c in AuctionConfigs.objects.all()})
         return {'form': form}
 
 class edit_global_configs(ThiefREST):
     template = 'auction/edit_configs.html'
     
     def get(self, request):
-        form = AuctionConfigsForm(initial={c.key:c.value for c in AuctionConfigs.objects.all()})
+        form = forms.AuctionConfigsForm(initial={c.key:c.value for c in AuctionConfigs.objects.all()})
         return {'form': form}
 
     def post(self, request):
-        form = AuctionConfigsForm(request.POST)
+        form = forms.AuctionConfigsForm(request.POST)
 
         if form.is_valid():
             data = form.cleaned_data
@@ -121,13 +121,15 @@ class create_auction_type(ThiefREST):
     template = 'auction/create_auction_type.html'
     def get(self, request, type):
         model = AUCTION_TYPE[type]
-        return {'form': AuctionTypeNoForm(), 'type': type}
+        return {'form': forms.AuctionTypeNoForm(), 'type': type}
     
     def post(self, request, type):
         model = AUCTION_TYPE[type]
-        form = AuctionTypeNoForm(request.POST)
+        form = forms.AuctionTypeNoForm(request.POST)
         
         if form.is_valid():
+            # Note: form.save() can not be use because form model
+            #       is an abstract model
             data = form.cleaned_data
             record = model(**data)
             record.save()
@@ -140,27 +142,25 @@ class edit_auction_type(ThiefREST):
     def get(self, request, type, id):
         model = AUCTION_TYPE[type]
         record = model.objects.get(id=id)
-        form = AuctionTypeNoForm(initial={'no': record.no, 'title': record.title})
+        form = forms.AuctionTypeNoForm(instance=record)
         return {'form': form, 'type': type}
 
     def post(self, request, type, id):
         model = AUCTION_TYPE[type]
-        form = AuctionTypeNoForm(request.POST)
+        record = model.objects.get(id=id)
+        form = forms.AuctionTypeNoForm(request.POST, instance=record)
         
         if form.is_valid():
-            data = form.cleaned_data
-            record = model.objects.get(id=id)
-            record.no = data['no']
-            record.title = data['title']
-            record.save()
+            form.save()
             return redirect(reverse('auction_types', args=(type, )))
+            
         else:
             return {'form': form, 'type': type}
     
 class delete_auction_type(ThiefREST):
     def post(self, request, type):
         model = AUCTION_TYPE[type]
-        form = AuctionTypeNoForm(request.POST)
+        form = forms.AuctionTypeNoForm(request.POST)
         id = request.POST.get('id')
         record = model.objects.get(id=id)
         record.delete()

@@ -9,12 +9,12 @@
   </div>
   <table class="table table-condensed">
     <thead>
-      <tr><th>代碼</th><th>品項</th><th style="width: 150px"></th></tr>
+      <tr><th>品項</th><th>廠牌</th><th>代碼</th><th style="width: 150px"></th></tr>
     </thead>
     <tbody>
       {% for item in items %}
         <tr>
-          <td>{{ item.no }}</td><td>{{ item.title }}</td><td>
+          <td>{{ item.title }}</td><td>{{ item.manufacturer }}</td><td>{{ item.no }}</td><td>
             <a href="{% url 'edit_auction_type' type item.id %}">編輯</a> |
             <a href="javascript:delete_record({{ item.id }})">刪除</a>
           </td>

@@ -6,6 +6,7 @@ class ProductTypeNo(models.Model):
     
     no = models.CharField(max_length=256, null=False)
     title = models.CharField(max_length=1024, null=False)
+    manufacturer = models.CharField(max_length=32, null=False, default="")
     
     @classmethod
     def get_no(cls, name):

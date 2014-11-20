@@ -37,9 +37,12 @@ class MultiColorWidget(forms.SelectMultiple):
             'small': ("input-sm" in attrs.get("class", "")),
             'input_selector': 'select[data-kgw-id=%s]' % (id, )}))
 
-class AuctionTypeNoForm(forms.Form):
-    no = forms.CharField(max_length=256, label="\xe4\xbb\xa3\xe7\xa2\xbc")
-    title = forms.CharField(max_length=1024, label="\xe5\x93\x81\xe9\xa0\x85", widget=KeywordGroupWidget)
+class AuctionTypeNoForm(forms.ModelForm):
+    class Meta:
+        model = models.ProductTypeNo
+        widgets = {
+            'title': KeywordGroupWidget
+        }
 
 class AuctionConfigsForm(forms.Form):
     goods_location = forms.CharField(label='\xe7\x89\xa9\xe5\x93\x81\xe6\x89\x80\xe5\x9c\xa8\xe5\x9c\xb0', required=False)
