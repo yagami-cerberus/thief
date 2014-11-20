@@ -220,38 +220,3 @@ class download_csv(ThiefREST):
 
         except RuntimeError as e:
             return HttpResponse(e.args[0], content_type="text/plain")
-
-# TODO: This will not be use anymore
-class upload_csv(ThiefREST):
-    template = 'products/upload_csv.html'
-    
-    def get(self, request):
-        lu = request.session.get(SESSION_LAST_UPLOAD_TIME_KEY)
-        lp = request.session.get(SESSION_LAST_UPLOAD_PRODUCTS_KEY)
-        
-        products = lp and Product.objects.filter(pk__in=lp.split(',')) or []
-        
-        return {
-            'upload_success': request.session.pop("upload_success", None),
-            'last_upload': lu,
-            'last_upload_products': products
-        }
-        
-    def post(self, request):
-        auction_type = request.POST.get('auction_type')
-        csv_file = request.FILES.get('csv_file')
-        unpacker = CsvUnpacker(auction_type, csv_file)
-        
-        idset = []
-        for data in unpacker.load():
-            data['vender'] = auction_type
-            p = Product.import_from(data)
-            p.created_at = current_local_time_str()
-            idset.append("%s"%p.id)
-        
-        request.session["upload_success"] = True
-        request.session[SESSION_LAST_UPLOAD_TIME_KEY] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        request.session[SESSION_LAST_UPLOAD_PRODUCTS_KEY] = ','.join(idset)
-        
-        return redirect(reverse('upload_products_csv'))
-        
