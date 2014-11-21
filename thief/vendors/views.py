@@ -36,7 +36,7 @@ class batch_import(ThiefREST):
     template = 'vendors/batch_import.html'
     
     def find_clumn_index(self, header):
-        mi, gi = 0, 1
+        mi, gi, pi = 0, 1, 2
         for i in xrange(len(header)):
             name = header[i]
             if name.decode("big5", "ignore") == u'\u578b\u865f':
