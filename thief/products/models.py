@@ -7,8 +7,6 @@ import urllib2
 
 from jsonfield import JSONField
 
-from thief.auction.models import YahooProductNo, RutenProductNo, RakutenProductNo
-
 class Product(models.Model):
     manufacturer = models.CharField('\xe5\xbb\xa0\xe7\x89\x8c', max_length=1024, null=False)
     
@@ -65,12 +63,9 @@ class Product(models.Model):
             'target_price': self.price,
             'color': self.color,
             'details': self.details,
-            'colors': self.colors_meta
+            'colors': self.colors_meta,
+            'catalog': self.group
         }
-        
-        data['yahoo_no'] = YahooProductNo.get_no(self.group)
-        data['ruten_no'] = RutenProductNo.get_no(self.group)
-        data['rakuten_no'] = RakutenProductNo.get_no(self.group)
         
         attach_counter = 1
         attach_name = self.jan or ("_%s" % self.pk)

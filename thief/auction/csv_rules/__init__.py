@@ -7,6 +7,7 @@ from tempfile import NamedTemporaryFile
 from django.conf import settings
 
 from thief.auction.models import Color
+from thief.auction.models import YahooProductNo, RutenProductNo, RakutenProductNo
 
 def modify_title(meta):
     title = meta.get('manufacturer') or ''
@@ -18,12 +19,19 @@ def modify_title(meta):
 
 class BaseRule(object):
     BOOLEAN_FIELDS = []
+    AUCTION_REF_KLASS = None
     
     def get_rule(self, name):
         path = os.path.join(settings.BASE_DIR, "thief", "auction", "csv_rules", "%s.json" % name)
         with open(path) as f:
             return json.load(f)
-
+    
+    def get_auction_no(self, meta):
+        if self.AUCTION_REF_KLASS == None:
+            return ""
+        else:
+            return self.AUCTION_REF_KLASS.get_no(meta.get('catalog'), meta.get('manufacturer'))
+        
     def get_fields(self):
         return [f[1] for f in self.rule]
 
@@ -79,6 +87,8 @@ class BaseRule(object):
             return None
 
 class YahooRule(BaseRule):
+    AUCTION_REF_KLASS = YahooProductNo
+    
     def __init__(self, fileobj, mode):
         BaseRule.__init__(self, fileobj, mode, 'yahoo')
 
@@ -92,6 +102,8 @@ class YahooRule(BaseRule):
             if "image_1" in meta:
                 return """<center><img src="%s%s"></center>""" % \
                     (meta.get("yahoo_image_url_prefix", ""), meta['image_1'])
+        elif field == "auction_no":
+            return self.get_auction_no(meta)
         elif field == "title":
             return modify_title(meta)
         
@@ -110,6 +122,8 @@ class YahooRule(BaseRule):
             return ""
     
 class RutenRule(BaseRule):
+    AUCTION_REF_KLASS = RutenProductNo
+    
     def __init__(self, fileobj, mode):
         BaseRule.__init__(self, fileobj, mode, 'ruten')
     
@@ -123,6 +137,8 @@ class RutenRule(BaseRule):
             if "image_1" in meta:
                 return """<center><img src="%s%s"></center>""" % \
                     (meta.get("ruten_image_url_prefix", ""), meta['image_1'])
+        elif field == "auction_no":
+            return self.get_auction_no(meta)
         elif field == "title":
             return modify_title(meta)
         
@@ -145,6 +161,8 @@ class RutenRule(BaseRule):
         return 'ruten_auction.csv'
 
 class RakutenRule(BaseRule):
+    AUCTION_REF_KLASS = RakutenProductNo
+    
     def __init__(self, fileobj, mode):
         BaseRule.__init__(self, fileobj, mode, 'rakuten')
     
@@ -152,6 +170,8 @@ class RakutenRule(BaseRule):
         val = meta.get(field)
         if field == "default_0":
             return "0"
+        elif field == "auction_no":
+            return self.get_auction_no(meta)
         elif field == "default_1":
             return "1"
         elif field == "default_-1":

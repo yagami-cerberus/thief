@@ -5,7 +5,7 @@
 	["文案", "summary"],
 	["商品描述", "describe"],
 	["補充商品描述", "describe_plus"],
-	["樂天商品分類", ""],
+	["樂天商品分類", "auction_no"],
 	["商品類別1", "home_catalog"],
 	["商品類別2", "rakuten_catalog_name"],
 	["商品類別3", ""],

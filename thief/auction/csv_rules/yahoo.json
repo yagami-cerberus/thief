@@ -1,5 +1,5 @@
 [
-	["類別", "yahoo_no"],
+	["類別", "auction_no"],
 	["商品名稱", "title"],
 	["商品描述", "describe"],
 	["所在地區", "goods_location"],
