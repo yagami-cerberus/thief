@@ -25,11 +25,13 @@
 <div class="alert alert-warning">注意：開始批次上傳後關閉本頁面將會中斷批次上傳作業</div>
 <table class="table table-striped">
   <thead>
-    <tr><th>型號</th><th>品項</th><th>價格</th><th style="width: 200px"></th></tr>
+    <tr><th>廠牌</th><th>型號</th><th>品項</th><th>價格</th><th style="width: 200px"></th></tr>
   </thead>
   <tbody>
     {% for r in data %}
-      <tr data-role="item" data-type="{{ r.t }}" data-group="{{ r.g }}" data-price="{{ r.p }}"><td>{{ r.t }}</td><td>{{ r.g }}</td><td>{{ r.p }}</td><td data-role="st"></td></tr>
+      <tr data-role="item" data-manufacturer="{{ r.m }}" data-model-id="{{ r.t }}" data-group="{{ r.g }}" data-price="{{ r.p }}">
+        <td>{{ r.m }}</td><td>{{ r.t }}</td><td>{{ r.g }}</td><td>{{ r.p }}</td><td data-role="st"></td>
+      </tr>
     {% endfor %}
   </tbody>
 </table>
@@ -42,14 +44,16 @@
 </div>
 
 <form style="display: none;" method="post" id="create_form">{% csrf_token %}
+  <input type="hidden" name="manufacturer">
   <input type="hidden" name="model_id" />
   <input type="hidden" name="group" />
   <input type="hidden" name="price" />
 </form>
 <script type="text/javascript">
 $(function() {
-  function make_request(model_id, group, price, $element) {
+  function make_request(manufacturer, model_id, group, price, $element) {
     var $f = $("form#create_form");
+    $("[name=manufacturer]", $f).val(manufacturer)
     $("[name=model_id]", $f).val(model_id);
     $("[name=group]", $f).val(group);
     $("[name=price]", $f).val(price);
@@ -89,7 +93,7 @@ $(function() {
       var delta = unixTime - Date.now();
       if(delta <= 0) {
         $r.removeAttr("data-timeoffset", false);
-        make_request($r.attr("data-type"), $r.attr("data-group"), $r.attr("data-price"), $r)
+        make_request($r.attr("data-manufacturer"), $r.attr("data-model-id"), $r.attr("data-group"), $r.attr("data-price"), $r)
       } else {
         $("[data-role=st]", $r).text(format_timedelta(delta) + " 後開始...")
       }

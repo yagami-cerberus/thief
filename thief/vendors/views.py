@@ -1,5 +1,6 @@
 
 from itertools import ifilter
+import socket
 import csv
 
 from django.core.urlresolvers import reverse
@@ -36,17 +37,19 @@ class batch_import(ThiefREST):
     template = 'vendors/batch_import.html'
     
     def find_clumn_index(self, header):
-        mi, gi, pi = 0, 1, 2
+        manufacturer_index, model_index, group_index, price_index = 0, 1, 2, 3
         for i in xrange(len(header)):
             name = header[i]
-            if name.decode("big5", "ignore") == u'\u578b\u865f':
-                mi = i
-            if name.decode("big5", "ignore") == u'\u54c1\u9805':
-                gi = i
-            if name.decode("big5", "ignore") == u'\u50f9\u683c':
-                pi = i
+            if name.decode("big5", "ignore") == u'\u5ee0\u724c':
+                manufacturer_index = i
+            elif name.decode("big5", "ignore") == u'\u578b\u865f':
+                model_index = i
+            elif name.decode("big5", "ignore") == u'\u54c1\u9805':
+                group_index = i
+            elif name.decode("big5", "ignore") == u'\u50f9\u683c':
+                price_index = i
 
-        return mi, gi, pi
+        return manufacturer_index, model_index, group_index, price_index
     
     def get(self, request):
 		return {}
@@ -54,9 +57,10 @@ class batch_import(ThiefREST):
     def post(self, request):
         f = request.FILES.get('csv_file')
         reader = csv.reader(f)
-        mi, gi, pi = self.find_clumn_index(reader.next())
-        data = [{'t': r[mi].decode("big5", "ignore"), 'g': r[gi].decode("big5", "ignore"), 'p': r[pi].decode("big5", "ignore")}
-                    for r in ifilter(lambda i: i[mi], reader)]
+        ma_i, mo_i, g_i, pr_i = self.find_clumn_index(reader.next())
+        data = [{'t': r[mo_i].decode("big5", "ignore"), 'g': r[g_i].decode("big5", "ignore"),
+                    'm': r[ma_i].decode("big5", "ignore"),'p': r[pr_i].decode("big5", "ignore")}
+                    for r in ifilter(lambda i: i[mo_i], reader)]
                     
         return {'data': data}
 
@@ -74,12 +78,13 @@ class import_item(ThiefRestAPI):
         
     def fetch_image(self, product):
         gis = GoogleImageSearch()
-        is_cache, gis_images = gis.search("%s %s" % (product.model_id, manufacturer))
+        is_cache, gis_images = gis.search("%s %s" % (product.model_id, product.manufacturer))
         
         for gis_image in gis_images:
+            print(">> %s" % gis_image.url)
             if not (gis_image.url.startswith("http://") or gis_image.url.startswith("https://")):
                 continue
-            if gis_image.width < 640 or gis_image.height < 480:
+            if gis_image.width < 320 or gis_image.height < 240:
                 continue
             
             product.fetch_image_from_url(gis_image.url)
@@ -91,27 +96,8 @@ class import_item(ThiefRestAPI):
         if g:
             return g.keywords
 
-    def manufacturer_convert(self, orig_input):
-        m = {
-            "\xe3\x83\xa4\xe3\x83\x9e\xe3\x83\x8f\xe6\xa0\xaa\xe5\xbc\x8f\xe4\xbc\x9a\xe7\xa4\xbe": "YAMAHA",
-            "\xe3\x83\xa4\xe3\x83\x9e\xe3\x83\x8f": "YAMAHA",
-            "\xe3\x83\x91\xe3\x83\x8a\xe3\x82\xbd\xe3\x83\x8b\xe3\x83\x83\xe3\x82\xaf": "Panasonic",
-            "\xe3\x82\xbd\xe3\x83\x8b\xe3\x83\xbc\xe6\xa0\xaa\xe5\xbc\x8f\xe4\xbc\x9a\xe7\xa4\xbe": "SONY",
-            "\xe3\x82\xbd\xe3\x83\x8b\xe3\x83\xbc": "SONY",
-            "\xe3\x82\xb7\xe3\x83\xa3\xe3\x83\xbc\xe3\x83\x97\xe6\xa0\xaa\xe5\xbc\x8f\xe4\xbc\x9a\xe7\xa4\xbe": "Sharp",
-            "\xe3\x82\xb7\xe3\x83\xa3\xe3\x83\xbc\xe3\x83\x97": "Sharp",
-            "\xe3\x82\xab\xe3\x82\xb7\xe3\x82\xaa\xe8\xa8\x88\xe7\xae\x97\xe6\xa9\x9f": "CASIO",
-            "\xe3\x82\xab\xe3\x82\xb7\xe3\x82\xaa": "CASIO",
-            "\xe3\x83\x80\xe3\x82\xa4\xe3\x83\x8b\xe3\x83\x81\xe5\xb7\xa5\xe6\xa5\xad\xe6\xa0\xaa\xe5\xbc\x8f\xe4\xbc\x9a\xe7\xa4\xbe": "DAINICHI",
-            "\xe3\x83\x80\xe3\x82\xa4\xe3\x83\x8b\xe3\x83\x81": "DAINICHI",
-            "\xe6\xa0\xaa\xe5\xbc\x8f\xe4\xbc\x9a\xe7\xa4\xbe\xe3\x83\xaf\xe3\x82\xb3\xe3\x83\xa0": "Wacom",
-            "\xe3\x83\xaf\xe3\x82\xb3\xe3\x83\xa0": "Wacom",
-            "\xe3\x83\xaf\xe3\x82\xb3\xe3\x83\xa0\xe6\xa0\xaa\xe5\xbc\x8f\xe4\xbc\x9a\xe7\xa4\xbe": "Wacom",
-            
-        }
-        return m.get(orig_input, orig_input)
-    
     def post(self, request):
+        manufacturer = request.POST.get('manufacturer')
         model_id = request.POST.get('model_id')
         group = request.POST.get('group', '')
         price = request.POST.get('price')
@@ -130,17 +116,21 @@ class import_item(ThiefRestAPI):
         try:
             rakuten_vendor = get_vendor('rakuten')()
             rakuten = rakuten_vendor.search(model_id)[-1][0]
-            jan = rakuten_vendor.fetch_jan(rakuten.url)
         except IndexError:
             pass
         
+        try:
+            jan = rakuten_vendor.fetch_jan(rakuten.url)
+        except socket.error:
+            pass
+    
         try:
             amazon_vendor = get_vendor('amazon_jp')()
             amazon = amazon_vendor.search(model_id)[-1][0]
         except IndexError:
             pass
         
-        product = Product(manufacturer=self.manufacturer_convert(amazon.manufacturer),
+        product = Product(manufacturer=manufacturer,
             model_id=model_id, group=group, release_date=amazon.release_date or rakuten.release_date,
             weight=amazon.weight, size=amazon.size, price=price, summary="", color="", details="",
             jan=jan, created_at=current_local_time_str())

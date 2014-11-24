@@ -27,7 +27,6 @@ urlpatterns = patterns('',
     url(r'^products$', 'thief.products.views.products', name='products'),
     
     url(r'^products/download/(?P<auction_type>((yahoo)|(ruten)|(rakuten))).zip$', 'thief.products.views.download_csv', name='download_products_csv'),
-    url(r'^products/upload$', 'thief.products.views.upload_csv', name='upload_products_csv'),
 
     url(r'^product/(?P<id>\d+)$', 'thief.products.views.product', name='product'),
     url(r'^product/(?P<id>\d+)/prepare$', 'thief.products.views.prepare_product', name='prepare_product'),
