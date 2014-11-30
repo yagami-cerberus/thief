@@ -1,59 +1,73 @@
 {% extends 'foundation.html' %}
 {% block title %}賣場關鍵字管理{% endblock title %}
 {% block main %}
-<div style="float: right"><a href="{% url 'auction_keyword_groups' %}">上一頁</a></div>
-<h3>賣場關鍵字管理</h3>
+<style>
+.keyword {
+  padding: 8px 8px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.keyword .del-btn {
+  float: right;
+  display: none;
+}
+.keyword:hover {
+  background-color: #eee;
+}
+.keyword:hover .del-btn {
+  display: block;
+}
+</style>
+<h3>品項關鍵字管理 - {{ catalog.name }}</h3>
 <hr />
 <div class="container">
   {% include 'auction/_keyword_add.html' %}
 </div>
 <div class="container">
-  <table class="table table-condensed">
-    <thead>
-      <tr><th>關鍵字</th><th style="width: 150px"></th></tr>
-    </thead>
-    <tbody>
-      {% for k in keywords %}
-        <tr>
-          <td>{{ k.keyword }}</td><td><a href="javascript:void(0)" data-pk="{{ k.pk}}" data-type="kw">刪除</a></td>
-        </tr>
-      {% endfor %}
-    <tbody>
-  </table>
+  {% for manufacturer, keywords in grouped_keywords.items %}
+  <h5>廠牌: {{ manufacturer }}</h5>
+  <div class="container">
+    {% for k in keywords %}
+      <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+        <div class="keyword">
+          <a class="del-btn btn btn-xs btn-danger" data-delete-pk="{{ k.id }}">刪除</a>
+          {{ k.keyword }}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <hr />
+  {% endfor %}
 </div>
 <div class="container">
+  <h3>關鍵字群組</h3>
   <table class="table table-condensed">
     <thead>
-      <tr><th>品項關鍵字</th><th style="width: 150px"></th></tr>
+      <tr><th>廠牌</th><th>關鍵字群組</th></tr>
     </thead>
     <tbody>
-      {% for k in keyword_sets %}
+      {% for s in sets %}
         <tr>
-          <td>{{ k.set }}</td><td><a href="javascript:void(0)" data-pk="{{ k.pk}}" data-type="kw_set">刪除</a></td>
+          <td>{{ s.manufacturer }}</td><td>{{ s.set }}</td>
         </tr>
       {% endfor %}
     <tbody>
   </table>
 </div>
-<form method="post" style="display: none" id="delete_form" action="{% url 'auction_keyword_groups' %}">{% csrf_token %}
-  <input type="hidden" name="pk" value="" />
-  <input type="hidden" name="type" value="" />
-  <input type="hidden" name="group" value="{{ group }}" />
+<form method="post" style="display: none" id="delete_form" action="">{% csrf_token %}
+  <input type="hidden" name="id" value="" />
   <input type="hidden" name="__method__" value="delete" />
 </form>
 <script type="text/javascript">
 $(function() {
-  $("a[data-pk][data-type]").bind("click", function() {
+  $("a[data-delete-pk]").bind("click", function() {
     var $this = $(this);
-    var pk = $this.attr("data-pk");
-    var type = $this.attr("data-type");
+    var pk = $(this).attr("data-delete-pk");
     
-    if(confirm("確定要刪除?")) {
-      var $f = $("#delete_form");
-      $("[name=pk]", $f).val(pk);
-      $("[name=type]", $f).val(type);
-      $f.submit();
-    }
+    var $f = $("#delete_form");
+    $("[name=id]", $f).val(pk);
+    $f.submit();
   });
 });
 </script>

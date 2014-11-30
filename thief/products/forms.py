@@ -1,7 +1,7 @@
 from django import forms
 
 from thief.products import models
-from thief.auction.forms import KeywordGroupWidget, MultiColorWidget
+from thief.auction.forms import CatalogWidget, KeywordWidget, MultiColorWidget
 
 class MultipleChoiceField(forms.MultipleChoiceField):
     def validate(self, value):
@@ -12,12 +12,13 @@ class Product(forms.ModelForm):
     
     class Meta:
         model = models.Product
-        fields = ['manufacturer', 'model_id', 'group', 'jan', 'release_date',
-            'keywords', 'summary', 'size', 'weight', 'price', 'color',
+        fields = ['catalog', 'manufacturer', 'model_id', 'keywords', 'jan', 
+            'release_date', 'summary', 'size', 'weight', 'price', 'color',
             'details', 'colors_meta', 'created_at']
         exclude = ('product', 'vendor', 'item_id', 'source_price', 'source_currency')
         widgets = {
-            'group': KeywordGroupWidget,
+            'catalog': CatalogWidget,
+            'keywords': KeywordWidget,
             'colors_meta': MultiColorWidget,
         }
     

@@ -1,9 +1,10 @@
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 
-from thief.rest import ThiefREST
+from thief.rest import ThiefREST, ThiefRestAPI
 
-from thief.auction.models import YahooProductNo, RutenProductNo, RakutenProductNo, AuctionConfigs, Keyword, KeywordSet, Color
+from thief.auction.models import YahooProductNo, RutenProductNo, RakutenProductNo, AuctionConfigs
+from thief.auction.models import Catalog, Keyword, KeywordSet, Color
 from thief.auction import forms
 
 AUCTION_TYPE = {
@@ -54,39 +55,6 @@ class edit_global_configs(ThiefREST):
         m.save()
         return m
 
-class keyword_groups(ThiefREST):
-    template = 'auction/keyword_groups.html'
-    
-    def get(self, request):
-        return {'groups': Keyword.get_groups()}
-        
-    def post(self, request):
-        group = request.POST.get('g').strip()
-        keyword = request.POST.get('k').strip()
-        if group and keyword:
-            m = Keyword.objects.get_or_create(group=group, keyword=keyword)
-        return redirect(reverse('auction_keywords', args=(group, )))
-    
-    def delete(self, request):
-        pk = request.POST.get('pk')
-        type = request.POST.get('type')
-        model = (type == "kw" and Keyword or KeywordSet)
-        
-        for k in model.objects.filter(pk=pk):
-            k.delete()
-        
-        return redirect(reverse('auction_keywords', args=(request.POST.get('group'), )))
-
-class keywords(ThiefREST):
-    template = 'auction/keywords.html'
-    
-    def get(self, request, group):
-        return {
-            'group': group,
-            'keywords': Keyword.objects.filter(group=group).order_by('keyword').all(),
-            'keyword_sets': KeywordSet.objects.filter(group=group).order_by('set').all()
-        }
-
 class colors(ThiefREST):
     template = 'auction/colors.html'
     
@@ -113,14 +81,16 @@ class auction_types(ThiefREST):
     template = 'auction/auction_types.html'
 
     def get(self, request, type):
-        model = AUCTION_TYPE[type]
-        records = model.objects.order_by('title').all()
-        return {'items': records, 'type': type, 'cls': model}
+        auction_cls = AUCTION_TYPE[type]
+        
+        grouped_items = {c: auction_cls.objects.filter(catalog=c).order_by("manufacturer") for c in Catalog.objects.all()}
+        return {'grouped_items': grouped_items, 'type': type, 'cls': auction_cls}
 
 class create_auction_type(ThiefREST):
     template = 'auction/create_auction_type.html'
     def get(self, request, type):
         model = AUCTION_TYPE[type]
+        print(">>>>")
         return {'form': forms.AuctionTypeNoForm(), 'type': type}
     
     def post(self, request, type):
@@ -139,6 +109,7 @@ class create_auction_type(ThiefREST):
 
 class edit_auction_type(ThiefREST):
     template = 'auction/edit_auction_type.html'
+
     def get(self, request, type, id):
         model = AUCTION_TYPE[type]
         record = model.objects.get(id=id)
@@ -166,3 +137,59 @@ class delete_auction_type(ThiefREST):
         record.delete()
         return redirect(reverse('auction_types', args=(type, )))
 
+class catalogs(ThiefREST):
+    template = 'auction/catalogs.html'
+
+    def get(self, request):
+        return {'catalogs': Catalog.objects.all()}
+    
+    def post(self, request):
+        name = request.POST.get("n")
+        if name:
+            Catalog(name=name).save()
+        return redirect(reverse('catalogs'))
+    
+    def put(self, request):
+        c = Catalog.objects.get(id=request.POST.get('id'))
+        c.name = request.POST.get('name')
+        c.save()
+        return redirect(reverse('catalogs'))
+    
+    def delete(self, request):
+        c = Catalog.objects.get(id=request.POST.get('id'))
+        c.delete()
+        return redirect(reverse('catalogs'))
+
+class keywords(ThiefREST):
+    template = 'auction/keywords.html'
+    
+    def get(self, request, catalog_id):
+        catalog = Catalog.objects.get(id=catalog_id)
+
+        return {
+            'catalog': catalog,
+            'grouped_keywords': catalog.grouped_keywords(),
+            'sets': KeywordSet.objects.filter(catalog=catalog)
+        }
+    
+    def post(self, request, catalog_id):
+        catalog = Catalog.objects.get(id=catalog_id)
+        m, k = request.POST.get('m'), request.POST.get('k')
+        
+        if k:
+            Keyword(catalog=catalog, manufacturer=m, keyword=k).save()
+        
+        return redirect(reverse('keywords', args=(catalog_id,)))
+    
+    def delete(self, request, catalog_id):
+        for k in Keyword.objects.filter(id=request.POST.get("id"), catalog_id=catalog_id):
+            k.delete()
+
+        return redirect(reverse('keywords', args=(catalog_id,)))
+
+class get_keywords(ThiefRestAPI):
+    def get(self, request):
+        o = (Keyword.objects.filter(catalog_id=request.GET.get("catalog_id")) & 
+            (Keyword.objects.filter(manufacturer=request.GET.get("manufacturer")) |
+            Keyword.objects.filter(manufacturer=request.GET.get("")))).values_list("keyword", flat=True)
+        return list(o)

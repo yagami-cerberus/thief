@@ -9,6 +9,7 @@ from django.utils.timezone import now, timedelta
 from thief.rest import ThiefREST, ThiefRestAPI
 from thief.vendors import ProductOverview, GoogleImageSearch
 from thief.vendors import get_vendor
+from thief.auction.models import KeywordSet
 from thief.products.models import Product, ProductReference
 from thief.products.forms import ProductReference as ProductReferenceForm
 
@@ -81,7 +82,6 @@ class import_item(ThiefRestAPI):
         is_cache, gis_images = gis.search("%s %s" % (product.model_id, product.manufacturer))
         
         for gis_image in gis_images:
-            print(">> %s" % gis_image.url)
             if not (gis_image.url.startswith("http://") or gis_image.url.startswith("https://")):
                 continue
             if gis_image.width < 320 or gis_image.height < 240:
@@ -92,14 +92,14 @@ class import_item(ThiefRestAPI):
         return False
     
     def guess_keywords(self, p):
-        g = Product.objects.filter(group=p.group, keywords__isnull=False).exclude(id=p.id, keywords="").order_by("-id").first()
+        g = KeywordSet.objects.filter(catalog=p.catalog, manufacturer=p.manufacturer).first()
         if g:
-            return g.keywords
+            return g.set
 
     def post(self, request):
         manufacturer = request.POST.get('manufacturer')
         model_id = request.POST.get('model_id')
-        group = request.POST.get('group', '')
+        catalog_id = request.POST.get('catalog_id', '')
         price = request.POST.get('price')
         
         if not model_id:
@@ -121,7 +121,7 @@ class import_item(ThiefRestAPI):
         
         try:
             jan = rakuten_vendor.fetch_jan(rakuten.url)
-        except socket.error:
+        except (socket.error, RuntimeError):
             pass
     
         try:
@@ -131,7 +131,7 @@ class import_item(ThiefRestAPI):
             pass
         
         product = Product(manufacturer=manufacturer,
-            model_id=model_id, group=group, release_date=amazon.release_date or rakuten.release_date,
+            model_id=model_id, catalog_id=catalog_id, release_date=amazon.release_date or rakuten.release_date,
             weight=amazon.weight, size=amazon.size, price=price, summary="", color="", details="",
             jan=jan, created_at=current_local_time_str())
         

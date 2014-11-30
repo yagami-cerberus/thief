@@ -1,12 +1,14 @@
+import itertools
+
 from django.db import models
 
 class ProductTypeNo(models.Model):
     class Meta:
         abstract = True
     
-    no = models.CharField(max_length=256, null=False)
-    title = models.CharField(max_length=1024, null=False)
-    manufacturer = models.CharField(max_length=32, null=False, blank=True, default="")
+    catalog = models.ForeignKey('auction.Catalog', null=False, blank=False)
+    manufacturer = models.CharField(u'\u5ee0\u724c', max_length=32, null=False, blank=True, default="")
+    no = models.CharField(u'\u4ee3\u78bc', max_length=256, null=False)
     
     @classmethod
     def get_no(cls, name, manufacturer):
@@ -37,25 +39,28 @@ class AuctionConfigs(models.Model):
     key = models.CharField(max_length=256, null=False)
     value = models.CharField(max_length=256, null=False)
 
-class Keyword(models.Model):
-    group = models.CharField(max_length=256, null=False)
-    keyword = models.CharField(max_length=256, null=False)
+class Catalog(models.Model):
+    name = models.CharField(max_length=256, null=False)
 
-    @classmethod
-    def get_groups(cls):
-        kw_groups = {item[0] for item in Keyword.objects.exclude(group='').annotate(c=models.Count('group')).values_list('group')}
-        kw_groups = kw_groups.union(
-            {item[0] for item in KeywordSet.objects.annotate(c=models.Count('group')).values_list('group')}
-        )
-        return sorted(kw_groups)
+    def __str__(self):
+        return self.name
+
+    def grouped_keywords(self):
+        return {i[0]: list(i[1]) 
+            for i in itertools.groupby(self.keyword_set.order_by("manufacturer"), lambda e: e.manufacturer)}
+
+class Keyword(models.Model):
+    catalog = models.ForeignKey(Catalog, null=False)
+    manufacturer = models.CharField(max_length=32, null=False, blank=True, default="")
+    keyword = models.CharField(max_length=256, null=False)
+    
+    def __repr__(self):
+        return "<Keyword: %s for %s>" % (self.keyword, self.manufacturer)
     
 class KeywordSet(models.Model):
-    group = models.CharField(max_length=256, null=False)
+    catalog = models.ForeignKey(Catalog, null=False)
+    manufacturer = models.CharField(max_length=32, null=False, blank=True, default="")
     set = models.CharField(max_length=4096, null=False)
-
-    @classmethod
-    def get_groups(cls):
-         return {item[0] for item in cls.objects.exclude(group='').annotate(c=models.Count('group')).values_list('group')}
 
 class Color(models.Model):
     name = models.CharField(max_length=128, null=False)

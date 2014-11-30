@@ -1,18 +1,13 @@
 {% load keywords %}
 {% load_keyword_groups %}
-<form id="create_keyword_form" role="form" class="form-inline" method="post" action="{% url 'auction_keyword_groups' %}" id="keyword-add">{% csrf_token %}
+<form id="create_keyword_form" role="form" class="form-inline" method="post" action="" id="keyword-add">{% csrf_token %}
   <div class="form-group">
-    <label class="sr-only" for="k">品項</label>
-    <div class="input-group">
-      <input type="text" name="g" class="form-control input-sm" placeholder="品項" value="{{ group }}" />
-      <div class="input-group-btn">
-        {% keyword_group_dropdown_selector "form#keyword-add input[name=g]" %}
-      </div>
-    </div>
+    <label class="sr-only" for="k">廠牌</label>
+    <input type="text" name="m" class="form-control input-sm" placeholder="廠牌" />
   </div>
   <div class="form-group">
     <label class="sr-only" for="k">關鍵字</label>
-    <input type="text" name="k" class="form-control input-sm" placeholder="新增關鍵字" />
+    <input type="text" name="k" class="form-control input-sm" placeholder="關鍵字" />
   </div>
   <button class="btn btn-success btn-sm" type="submit">新增</button>
 </form>

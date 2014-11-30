@@ -6,12 +6,13 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('',
     url(r'^$', 'thief.products.views.products', name='home'),
     
-    url(r'^auction/global_configs$', 'thief.auction.views.global_configs', name='auction_configs'),
-    url(r'^auction/global_configs/edit$', 'thief.auction.views.edit_global_configs', name='edit_auction_configs'),
-
-    url(r'^auction/keywords$', 'thief.auction.views.keyword_groups', name='auction_keyword_groups'),
-    url(r'^auction/keywords/(?P<group>(.+))$', 'thief.auction.views.keywords', name='auction_keywords'),
-
+    url(r'^catalogs$', 'thief.auction.views.catalogs', name='catalogs'),
+    url(r'^catalog/(?P<catalog_id>(.+))/keywords$', 'thief.auction.views.keywords', name='keywords'),
+    url(r'^catalog/get_keywords.(?P<format>(json))$', 'thief.auction.views.get_keywords', name='get_keywords'),
+    
+    url(r'^global_configs$', 'thief.auction.views.global_configs', name='auction_configs'),
+    url(r'^global_configs/edit$', 'thief.auction.views.edit_global_configs', name='edit_auction_configs'),
+    
     url(r'^auction/colors$', 'thief.auction.views.colors', name='auction_colors'),
 
     url(r'^auction/(?P<type>((yahoo)|(ruten)|(rakuten)))$', 'thief.auction.views.auction_types', name='auction_types'),

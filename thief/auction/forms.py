@@ -6,22 +6,33 @@ from django import forms
 
 from thief.auction import models
 
-class KeywordGroupWidget(forms.HiddenInput):
-    is_hidden = False
-    
-    def render(self, name, value, attrs=None):
+class CatalogWidget(forms.Select):
+    def render(self, name, value, attrs=None, choices=()):
         if not attrs: attrs = {}
         id = get_random_string(8)
-        attrs['data-kgw-id'] = id
-        input = super(KeywordGroupWidget, self).render(name, value, attrs)
-        
-        t = get_template("auction/__keyword_dropdown_selector.html")
+        attrs['data-catalog-widget'] = id
+        input = super(CatalogWidget, self).render(name, value, attrs, choices)
+
+        t = get_template("auction/widget/catalog.html")
         return t.render(Context({
-            'keyword_groups': [{"id": g, "text": g} for g in models.Keyword.get_groups()],
             'input': input,
             'small': ("input-sm" in attrs.get("class", "")),
-            'input_selector': 'input[data-kgw-id=%s]' % (id, ),
-            'identify': get_random_string(6)}))
+            'input_selector': 'select[data-catalog-widget=%s]' % (id, )}))
+
+class KeywordWidget(forms.TextInput):
+    def render(self, name, value, attrs=None):
+        id = get_random_string(8)
+        input = super(KeywordWidget, self).render(name, value, attrs)
+
+        t = get_template("auction/widget/keyword.html")
+        return t.render(Context({
+            'input': input,
+            'identify': id
+        }))
+
+class Catalog(forms.ModelForm):
+    class Meta:
+        model = models.Catalog
 
 class MultiColorWidget(forms.SelectMultiple):
     def render(self, name, value, attrs=None):
@@ -38,11 +49,10 @@ class MultiColorWidget(forms.SelectMultiple):
             'input_selector': 'select[data-kgw-id=%s]' % (id, )}))
 
 class AuctionTypeNoForm(forms.ModelForm):
+    catalog = forms.ModelChoiceField(queryset=models.Catalog.objects.all(), empty_label=None, widget=CatalogWidget)
+    
     class Meta:
         model = models.ProductTypeNo
-        widgets = {
-            'title': KeywordGroupWidget
-        }
 
 class AuctionConfigsForm(forms.Form):
     goods_location = forms.CharField(label='\xe7\x89\xa9\xe5\x93\x81\xe6\x89\x80\xe5\x9c\xa8\xe5\x9c\xb0', required=False)

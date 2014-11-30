@@ -1,0 +1,105 @@
+{% extends 'foundation.html' %}
+{% block title %}品項管理{% endblock title %}
+{% block main %}
+<style>
+table.catalog-table th:nth-child(2),
+table.catalog-table td:nth-child(2) {
+  width: 150px;
+  text-align: center;
+}
+
+table.catalog-table th:nth-child(3),
+table.catalog-table td:nth-child(3) {
+  width: 200px;
+}
+</style>
+<h3>品項管理</h3>
+<hr />
+<div class="container">
+  <form class="form-inline" role="form" action="{% url 'catalogs' %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label class="sr-only" for="k">品項</label>
+      <input type="text" name="n" class="form-control input-sm" placeholder="品項" value="{{ name }}" />
+      <button class="btn btn-success btn-sm">新增</button>
+    </div>
+  </form>
+</div>
+<div class="container">
+  <table class="table table-condensed catalog-table">
+    <thead>
+      <tr><th>品項</th><th>賣場代號</th><th style="width: 100px;"></th></tr>
+    </thead>
+    <tbody>
+      {% for c in catalogs %}
+        <tr>
+          <td data-catalog="{{ c.id }}">{{ c.name }}</td>
+          <td>
+            <a class="btn btn-xs btn-default" href="{% url 'auction_types' 'yahoo' %}#catalog-{{ c.id }}">Yahoo</a>
+            <a class="btn btn-xs btn-default" href="{% url 'auction_types' 'ruten' %}#catalog-{{ c.id }}">露天</a>
+            <a class="btn btn-xs btn-default" href="{% url 'auction_types' 'rakuten' %}#catalog-{{ c.id }}">樂天</a>
+          </td>
+          <td>
+            <a href="{% url 'keywords' c.id %}">關鍵字管理</a> | 
+            <a href="#" data-edit="{{ c.id }}">編輯</a> |  <a href="#" data-delete="{{ c.id }}">刪除</a>
+          </td>
+        </tr>
+      {% endfor %}
+    <tbody>
+  </table>
+</div>
+
+<div class="modal fade edit-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">編輯品項</h4>
+      </div>
+      <div class="modal-body">
+        <form id="update-form" class="form-horizontal" role="form" action="{% url 'catalogs' %}" method="post">
+          {% csrf_token %}<input type="hidden" name="__method__" value="put" />
+          <input type="hidden" name="id" />
+          <div class="form-group">
+            <label for="name" class="control-label col-sm-2">品項</label>
+            <div class="col-sm-10">
+              <input type="text" name="name" class="form-control input-sm" placeholder="品項" value="{{ name }}" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" data-role="save">儲存</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<form id="delete-form" action="{% url 'catalogs' %}" method="post">{% csrf_token %}<input type="hidden" name="__method__" value="delete" /><input type="hidden" name="id" /></form>
+
+<script type="text/javascript">
+$(function() {
+  $(".edit-modal [data-role=save]").bind("click", function() {
+    $("#update-form").submit();
+  });
+  
+  $("a[data-edit]").bind("click", function() {
+    var id = $(this).attr("data-edit");
+    var name = $("[data-catalog=" + id + "]").text();
+    var $m = $(".edit-modal");
+    $("input[name=id]", $m).val(id);
+    $("input[name=name]", $m).val(name);
+    $m.modal("show");
+  });
+  
+  $("a[data-delete]").bind("click", function() {
+    if(confirm("注意：刪除品項將會刪除所有關聯的關鍵字與拍賣代號設定，您確定嗎？")) {
+      $f = $("#delete-form");
+      $("[name=id]", $f).val($(this).attr("data-delete"));
+      $f.submit();
+    }
+  });
+});
+</script>
+{% endblock %}

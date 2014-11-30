@@ -11,7 +11,7 @@ class Product(models.Model):
     manufacturer = models.CharField('\xe5\xbb\xa0\xe7\x89\x8c', max_length=1024, null=False)
     
     model_id = models.CharField('\xe5\x9e\x8b\xe8\x99\x9f', max_length=255, null=True)
-    group = models.CharField('\xe5\x93\x81\xe9\xa0\x85', max_length=255, null=True)
+    catalog = models.ForeignKey('auction.Catalog', null=True)
     
     jan = models.CharField('JAN\xe6\xa2\x9d\xe7\xa2\xbc', max_length=255, null=True)
     release_date = models.CharField('\xe7\x99\xbc\xe5\x94\xae\xe6\x97\xa5', max_length=255, null=True, blank=True)

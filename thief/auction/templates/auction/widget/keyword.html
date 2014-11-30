@@ -1,0 +1,46 @@
+<div data-keyword-widget="{{ identify }}">
+  <div>{{ input }}</div>
+  <div data-keywords class="keywords"></div>
+  <script type="tmpl/jquery">
+    <label class="keyword">${ kw }</label>
+  </script>
+</div>
+<script type="text/javascript">
+$(function() {
+  var $base = $("[data-keyword-widget={{ identify }}]");
+  var $input = $("input", $base);
+  
+  function updateKeywords(data) {
+    var $container = $("[data-keywords]", $base);
+    var $tmpl = $("script[type=\"tmpl/jquery\"]", $base);
+    
+    for(var i=0;i<data.length;i++) {
+      var $keyword = $tmpl.tmpl({kw: data[i]});
+      $container.append($keyword);
+    }
+  }
+  
+  $base.on("click", "label.keyword", function() {
+    var $input = $("[data-keyword-widget={{ identify }}] input");
+    $input.val($input.val() + ' ' + $(this).text());
+  })
+  .bind("reload", function(e, catalog_id, manufacturer) {
+    $("[data-keywords]", $(this)).children().remove();
+    
+    $.ajax({
+      url: "{% url 'get_keywords' 'json' %}",
+      data: {catalog_id: catalog_id, manufacturer: manufacturer},
+      dataType: "json",
+      type: "GET",
+      success: updateKeywords,
+      error: function(e) {
+        alert("取得關鍵字資料時發生錯誤")
+      }
+    })
+  });
+  
+  $("body").bind("keywords-reload", function(e, catalog_id, manufacturer) {
+    $base.trigger("reload", [catalog_id, manufacturer]);
+  })
+});
+</script>

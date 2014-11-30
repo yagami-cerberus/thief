@@ -141,23 +141,22 @@ class prepare_product(ThiefREST):
     
 class edit_product(ThiefREST):
     template = 'products/edit.html'
-    
-    def get_keywords_data(self):
-        return json.dumps({
-            'keywords': [(k.group, k.keyword) for k in Keyword.objects.order_by("keyword").all()],
-            'keyword_sets': [(k.group, k.set) for k in KeywordSet.objects.order_by("set").all()]
-        })
-    
+
     def update_keyword_set(self, product):
-        if product.keywords.strip() and product.group.strip():
-            KeywordSet.objects.get_or_create(set=product.keywords, group=product.group)
+        if product.keywords.strip():
+            obj, created = KeywordSet.objects.get_or_create(catalog=product.catalog,
+                manufacturer=product.manufacturer, defaults={"set": product.keywords})
+
+            if not created:
+                obj.set = product.keywords;
+                obj.save()
     
     def get(self, request, id):
         product = Product.objects.get(id=id)
         form = forms.Product(instance=product)
         keywords = Keyword.objects.all().values_list('keyword', flat=True)
         
-        return {'form': form, 'kw': self.get_keywords_data()}
+        return {'form': form}
         
     def post(self, request, id):
         product = Product.objects.get(id=id)
@@ -168,7 +167,7 @@ class edit_product(ThiefREST):
             self.update_keyword_set(product)
             return redirect(reverse('product', args=(product.id, )))
         else:
-            return {'form': form, 'kw': self.get_keywords_data()}
+            return {'form': form}
         
 class edit_image(ThiefREST):
     template = 'products/edit_images.html'

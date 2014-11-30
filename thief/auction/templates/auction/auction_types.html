@@ -9,14 +9,32 @@
   </div>
   <table class="table table-condensed">
     <thead>
-      <tr><th>品項</th><th>廠牌</th><th>代碼</th><th style="width: 150px"></th></tr>
+      <tr><th>品項</th><th>
+        <div class="col-xs-3 col-sm-3">代碼</div>
+        <div class="col-xs-6 col-sm-6">廠牌</div>
+      </th></tr>
     </thead>
     <tbody>
-      {% for item in items %}
-        <tr>
-          <td>{{ item.title }}</td><td>{{ item.manufacturer }}</td><td>{{ item.no }}</td><td>
-            <a href="{% url 'edit_auction_type' type item.id %}">編輯</a> |
-            <a href="javascript:delete_record({{ item.id }})">刪除</a>
+      {% for catalog, items in grouped_items.items %}
+        <tr id="catalog-{{ catalog.id }}">
+          <td>{{ catalog.name}}</td>
+          <td>
+            {% for item in items %}
+            <div>
+              <div class="col-xs-3 col-sm-3"><span class="badge">{{ item.no }}</span></div>
+              <div class="col-xs-6 col-sm-6">{{ item.manufacturer }}</div>
+              <div class="col-xs-3 col-sm-3 text-right">
+                <span class="btn-group">
+                  <a href="{% url 'edit_auction_type' type item.id %}">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                  </a> |
+                  <a href="javascript:delete_record({{ item.id }})">
+                    <span class="glyphicon glyphicon-remove"></span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          {% endfor %}
           </td>
         </tr>
       {% endfor %}

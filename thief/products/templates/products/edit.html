@@ -16,7 +16,6 @@ label.keyword {
 label.keyword:hover {
   background-color: #ddd;
 }
-
 </style>
 <h3>編輯產品</h3>
 <hr />
@@ -39,14 +38,26 @@ label.keyword:hover {
         <label class="keyword">${ kw }</label>
       {% templatetag openvariable %}/each}}
     </div>
-    <div class="col-sm-1 text-right">
-      <a href="{% url 'auction_keyword_groups' %}">管理</a>
-    </div>
   </div>
 </script>
 <script type="text/javascript">
 $(function() {
-  var kw_ds = {{ kw|safe }};
+  function reload_keywords() {
+    var m = $("input[name=manufacturer]").val();
+    var c = $("select[name=catalog]").val();
+    $("body").trigger("keywords-reload", [c, m]);
+  }
+  
+  $("input[name=manufacturer]").bind("change", reload_keywords).bind("keypress", function(e) {
+    if(e.keyCode == 13) {
+      $(this).blur();
+      return false;
+    }
+  });
+  $("select[name=catalog]").bind("change", reload_keywords);
+  reload_keywords();
+  
+  return;
   var keywords = kw_ds.keywords;
   var keyword_sets = kw_ds.keyword_sets;
   

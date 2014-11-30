@@ -3,25 +3,17 @@ from django.template.loader import get_template
 from django.template import Context
 from django import template
 
-from thief.auction.models import Keyword, KeywordSet
-from thief.auction.forms import KeywordGroupWidget
+from thief.auction.models import Catalog, Keyword, KeywordSet
+from thief.auction.forms import CatalogWidget
 
 register = template.Library()
 
 @register.simple_tag(name='load_keyword_groups', takes_context=True)
 def load_keyword_groups(context):
-    context['keyword_groups'] = Keyword.get_groups()
+    context['keyword_groups'] = Catalog.objects.values_list("name", flat=True)
     return ""
 
-@register.simple_tag(name='group_dropdown_selector')
-def group_dropdown_selector(name, value, css=""):
-    return KeywordGroupWidget().render(name, value, {"class": css} )
-    
-@register.simple_tag(name='keyword_group_dropdown_selector')
-def keyword_group_dropdown_selector(input_selector):
-    t = get_template("auction/__keyword_dropdown_selector.html")
-    return t.render(Context({
-        'keyword_groups': Keyword.get_groups(),
-        'input_selector': input_selector,
-        'identify': get_random_string(6),
-        'small': True }))
+@register.simple_tag(name='catalog_selector')
+def catalog_selector(name, value, css=""):
+    queryset = Catalog.objects.order_by("name").values_list("id", "name")
+    return CatalogWidget({}, queryset).render(name, value, {"class": css})
