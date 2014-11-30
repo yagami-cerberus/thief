@@ -6,6 +6,14 @@ from django import forms
 
 from thief.auction import models
 
+import json
+
+try:
+    unicode = unicode
+except NameError:
+    # TODO: python3 compect
+    unicode = str
+
 class CatalogWidget(forms.Select):
     def render(self, name, value, attrs=None, choices=()):
         if not attrs: attrs = {}
@@ -39,6 +47,10 @@ class MultiColorWidget(forms.SelectMultiple):
         if not attrs: attrs = {}
         id = get_random_string(8)
         attrs['data-kgw-id'] = id
+        
+        if isinstance(value, (str, unicode)):
+            value = json.loads(value)
+        
         input = super(MultiColorWidget, self).render(name, value, attrs,
              choices=models.Color.objects.values_list("symbol", "name"))
         

@@ -13,8 +13,8 @@ class Product(forms.ModelForm):
     class Meta:
         model = models.Product
         fields = ['catalog', 'manufacturer', 'model_id', 'keywords', 'jan', 
-            'release_date', 'summary', 'size', 'weight', 'price', 'color',
-            'details', 'colors_meta', 'created_at']
+            'release_date', 'summary', 'size', 'weight', 'price', 'details',
+            'colors_meta', 'created_at']
         exclude = ('product', 'vendor', 'item_id', 'source_price', 'source_currency')
         widgets = {
             'catalog': CatalogWidget,

@@ -22,10 +22,9 @@ class Product(models.Model):
     
     summary = models.TextField('\xe7\xb0\xa1\xe4\xbb\x8b', null=True, blank=True)
     price = models.IntegerField('\xe5\x83\xb9\xe6\xa0\xbc', null=True, blank=True)
-    color = models.CharField('\xe9\xa1\x8f\xe8\x89\xb2', max_length=255, null=True, blank=True)
     details = models.TextField('\xe7\x94\xa2\xe5\x93\x81\xe8\xaa\xaa\xe6\x98\x8e', null=True, blank=True)
     
-    colors_meta = JSONField('\xe5\x95\x86\xe5\x93\x81\xe8\xa6\x8f\xe6\xa0\xbc', null=True, blank=True)
+    colors_meta = JSONField('\xe9\xa1\x8f\xe8\x89\xb2', null=True, blank=True)
     
     created_at = models.CharField('\xe4\xb8\x8a\xe5\x82\xb3\xe6\x99\x82\xe9\x96\x93', max_length=50, null=True, blank=True)
 
