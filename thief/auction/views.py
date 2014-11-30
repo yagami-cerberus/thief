@@ -90,9 +90,9 @@ class create_auction_type(ThiefREST):
     template = 'auction/create_auction_type.html'
     def get(self, request, type):
         model = AUCTION_TYPE[type]
-        print(">>>>")
-        return {'form': forms.AuctionTypeNoForm(), 'type': type}
-    
+        default_catalog = Catalog.objects.filter(id=request.GET.get("catalog")).first()
+        return {'form': forms.AuctionTypeNoForm(initial={"catalog":default_catalog}), 'type': type}
+
     def post(self, request, type):
         model = AUCTION_TYPE[type]
         form = forms.AuctionTypeNoForm(request.POST)

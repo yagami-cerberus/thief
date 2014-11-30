@@ -1,12 +1,19 @@
 {% extends 'foundation.html' %}
 {% block title %}{{ cls.brand }} 類別代號管理{% endblock title %}
 {% block main %}
+<style>
+.row {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.row:hover {
+  background-color: #eee;
+}
+</style>
 <h3>{{ cls.brand }} 類別代號管理</h3>
 <hr />
 <div class="container">
-  <div class="row text-right">
-    <a href="{% url 'create_auction_type' type %}" class="btn btn-success">新增</a>
-  </div>
   <table class="table table-condensed">
     <thead>
       <tr><th>品項</th><th>
@@ -20,21 +27,26 @@
           <td>{{ catalog.name}}</td>
           <td>
             {% for item in items %}
-            <div>
+            <div class="row">
               <div class="col-xs-3 col-sm-3"><span class="badge">{{ item.no }}</span></div>
               <div class="col-xs-6 col-sm-6">{{ item.manufacturer }}</div>
-              <div class="col-xs-3 col-sm-3 text-right">
+              <div class="col-xs-2 col-sm-3 text-right">
                 <span class="btn-group">
-                  <a href="{% url 'edit_auction_type' type item.id %}">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                  </a> |
-                  <a href="javascript:delete_record({{ item.id }})">
-                    <span class="glyphicon glyphicon-remove"></span>
+                  <a class="btn btn-xs btn-default" href="{% url 'edit_auction_type' type item.id %}">
+                    編輯
+                  </a>
+                  <a class="btn btn-xs btn-danger" href="javascript:delete_record({{ item.id }})">
+                    刪除
                   </a>
                 </span>
               </div>
             </div>
           {% endfor %}
+          <div class="row">
+            <div class="col-xs-12 text-right">
+              <a href="{% url 'create_auction_type' type %}?catalog={{ catalog.id }}" class="btn btn-xs btn-success">新增</a>
+            </div>
+          </div>
           </td>
         </tr>
       {% endfor %}
