@@ -11,12 +11,12 @@ class ProductTypeNo(models.Model):
     no = models.CharField(u'\u4ee3\u78bc', max_length=256, null=False)
     
     @classmethod
-    def get_no(cls, name, manufacturer):
-        m = cls.objects.filter(title=name, manufacturer=manufacturer).first()
+    def get_no(cls, catalog, manufacturer):
+        m = cls.objects.filter(catalog=catalog, manufacturer=manufacturer).first()
         if m:
             return m.no
         else:
-            m = cls.objects.filter(title=name, manufacturer="").first()
+            m = cls.objects.filter(catalog=catalog, manufacturer="").first()
             if m: return m.no
             return ""
         

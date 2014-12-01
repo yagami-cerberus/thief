@@ -60,10 +60,9 @@ class Product(models.Model):
             'summary': self.summary,
             'start_price': self.price,
             'target_price': self.price,
-            'color': self.color,
             'details': self.details,
             'colors': self.colors_meta,
-            'catalog': self.group
+            'catalog': self.catalog
         }
         
         attach_counter = 1
