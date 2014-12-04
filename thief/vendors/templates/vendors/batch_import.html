@@ -29,7 +29,7 @@
   </thead>
   <tbody>
     {% for r in data %}
-      <tr data-role="item" data-manufacturer="{{ r.m }}" data-model-id="{{ r.t }}" data-group="{{ r.g }}" data-price="{{ r.p }}">
+      <tr data-role="item" data-manufacturer="{{ r.m }}" data-model-id="{{ r.t }}" data-catalog="{{ r.g }}" data-price="{{ r.p }}">
         <td>{{ r.m }}</td><td>{{ r.t }}</td><td>{{ r.g }}</td><td>{{ r.p }}</td><td data-role="st"></td>
       </tr>
     {% endfor %}
@@ -46,16 +46,16 @@
 <form style="display: none;" method="post" id="create_form">{% csrf_token %}
   <input type="hidden" name="manufacturer">
   <input type="hidden" name="model_id" />
-  <input type="hidden" name="group" />
+  <input type="hidden" name="catalog" />
   <input type="hidden" name="price" />
 </form>
 <script type="text/javascript">
 $(function() {
-  function make_request(manufacturer, model_id, group, price, $element) {
+  function make_request(manufacturer, model_id, catalog, price, $element) {
     var $f = $("form#create_form");
     $("[name=manufacturer]", $f).val(manufacturer)
     $("[name=model_id]", $f).val(model_id);
-    $("[name=group]", $f).val(group);
+    $("[name=catalog]", $f).val(catalog);
     $("[name=price]", $f).val(price);
 
     $("[data-role=st]", $element).text("處理中...");
@@ -66,11 +66,12 @@ $(function() {
             .text("")
             .append($("<span>OK</span>"))
             .append($("<a>檢視</a>").attr('href', result.url));
-        else if(result.st == false && result.url) {
+        else if(result.st == false) {
           $("[data-role=st]", $element)
             .text("")
-            .append($("<span></span>").text(MESSAGE[result.message]))
-            .append($("<a>檢視</a>").attr('href', result.url));
+            .append($("<span></span>").text(MESSAGE[result.message]));
+          if(result.url)
+            $("[data-role=st]", $element).append($("<a>檢視</a>").attr('href', result.url));
         }
       }, error: function() {
         $("[data-role=st]", $element).text("系統錯誤")
@@ -93,7 +94,7 @@ $(function() {
       var delta = unixTime - Date.now();
       if(delta <= 0) {
         $r.removeAttr("data-timeoffset", false);
-        make_request($r.attr("data-manufacturer"), $r.attr("data-model-id"), $r.attr("data-group"), $r.attr("data-price"), $r)
+        make_request($r.attr("data-manufacturer"), $r.attr("data-model-id"), $r.attr("data-catalog"), $r.attr("data-price"), $r)
       } else {
         $("[data-role=st]", $r).text(format_timedelta(delta) + " 後開始...")
       }

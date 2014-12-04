@@ -89,6 +89,8 @@ class Amazon(VendorBase):
             raw_results = self._api.item_search('All', Keywords=keyword, AssociateTag='..', ResponseGroup='ItemAttributes,OfferSummary')
             results = tuple(self.load_overview(r) for r in raw_results)
             return results
+        except TooManyRequests:
+            raise RuntimeError("amazon_flow_control")
         except NoExactMatchesFound:
             return ()
     

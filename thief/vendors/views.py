@@ -9,7 +9,7 @@ from django.utils.timezone import now, timedelta
 from thief.rest import ThiefREST, ThiefRestAPI
 from thief.vendors import ProductOverview, GoogleImageSearch
 from thief.vendors import get_vendor
-from thief.auction.models import KeywordSet
+from thief.auction.models import KeywordSet, Catalog
 from thief.products.models import Product, ProductReference
 from thief.products.forms import ProductReference as ProductReferenceForm
 
@@ -91,19 +91,21 @@ class import_item(ThiefRestAPI):
             return True
         return False
     
-    def guess_keywords(self, p):
-        g = KeywordSet.objects.filter(catalog=p.catalog, manufacturer=p.manufacturer).first()
+    def guess_keywords(self, catalog_id, manufacturer):
+        g = KeywordSet.objects.filter(catalog_id=catalog_id, manufacturer=manufacturer).first()
         if g:
             return g.set
 
     def post(self, request):
         manufacturer = request.POST.get('manufacturer')
         model_id = request.POST.get('model_id')
-        catalog_id = request.POST.get('catalog_id', '')
+        catalog = Catalog.objects.filter(name=request.POST.get('catalog', '')).first()
         price = request.POST.get('price')
         
+        if not catalog:
+            return {'st': False, 'message': 'BAD_CATALOG'}
         if not model_id:
-            return {'st': False, 'error': 'No model id given'}
+            return {'st': False, 'message': 'BAD_MODEL_ID'}
         
         exist_item = Product.objects.filter(model_id=model_id).first()
         if exist_item:
@@ -127,15 +129,17 @@ class import_item(ThiefRestAPI):
         try:
             amazon_vendor = get_vendor('amazon_jp')()
             amazon = amazon_vendor.search(model_id)[-1][0]
+        except RuntimeError:
+            return {'st': False, 'message': 'AMAZON_FLOW_CONTROL'}
         except IndexError:
             pass
         
         product = Product(manufacturer=manufacturer,
-            model_id=model_id, catalog_id=catalog_id, release_date=amazon.release_date or rakuten.release_date,
+            model_id=model_id, catalog_id=catalog.id, release_date=amazon.release_date or rakuten.release_date,
             weight=amazon.weight, size=amazon.size, price=price, summary="", details="",
             jan=jan, created_at=current_local_time_str())
         
-        product.keywords = self.guess_keywords(product)
+        product.keywords = self.guess_keywords(catalog.id, manufacturer)
         product.save()
 
         if not isinstance(rakuten, self.Shallow): self.write_ref(product, rakuten)

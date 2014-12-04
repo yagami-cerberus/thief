@@ -1,4 +1,7 @@
 MESSAGE = {
+    AMAZON_FLOW_CONTROL: "AMAZON 流量管制",
+    BAD_CATALOG: "品項錯誤",
+    BAD_MODEL_ID: "型號錯誤",
     ITEM_ALREADY_EXIST: "產品已經存在！"
 };
 
