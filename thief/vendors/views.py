@@ -132,7 +132,7 @@ class import_item(ThiefRestAPI):
         
         product = Product(manufacturer=manufacturer,
             model_id=model_id, catalog_id=catalog_id, release_date=amazon.release_date or rakuten.release_date,
-            weight=amazon.weight, size=amazon.size, price=price, summary="", color="", details="",
+            weight=amazon.weight, size=amazon.size, price=price, summary="", details="",
             jan=jan, created_at=current_local_time_str())
         
         product.keywords = self.guess_keywords(product)
