@@ -21,7 +21,7 @@
           <td><input type="checkbox" id="p_{{ p.id }}" name="p" value="{{ p.id }}" /></td>
           <td><label for="p_{{ p.id }}">{{ p.manufacturer }}</label></td>
           <td>{{ p.model_id|default:"" }}</td>
-          <td>{{ p.group|default:"" }}</td>
+          <td>{{ p.catalog.name|default:"" }}</td>
           <td>{{ p.release_date|default:"" }}</td>
           <td>{{ p.price|default:"" }}</td>
           <td>{{ p.created_at|default:"" }}</td>
