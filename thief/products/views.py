@@ -30,7 +30,7 @@ current_local_time_str = lambda: (now() + timedelta(hours=8)).strftime("%Y-%m-%d
 
 class products(ThiefREST):
     template = 'products/products.html'
-    order_list = ['manufacturer', 'model_id', 'group', 'release_date', 'price', 'created_at']
+    order_list = ['manufacturer', 'model_id', 'catalog__name', 'release_date', 'price', 'created_at']
     
     # List
     def get(self, request):
@@ -41,9 +41,8 @@ class products(ThiefREST):
         if q:
             query = (query.filter(manufacturer__contains=q) |
                      query.filter(model_id__contains=q) |
-                     query.filter(group__contains = q) |
-                     query.filter(release_date = q) |
-                     query.filter(group__contains = q))
+                     query.filter(catalog__name__contains = q) |
+                     query.filter(release_date = q))
         
         try:
             order_index = int(o)
