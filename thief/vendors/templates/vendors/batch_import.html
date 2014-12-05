@@ -22,7 +22,10 @@
 </div>
 
 {% if data %}
-<div class="alert alert-warning">注意：開始批次上傳後關閉本頁面將會中斷批次上傳作業</div>
+<div class="alert alert-warning">
+  <div class="pull-right"><button class="btn btn-sm btn-success" data-role="go">開始</button></div>
+  注意：開始批次上傳後關閉本頁面將會中斷批次上傳作業
+</div>
 <table class="table table-striped">
   <thead>
     <tr><th>廠牌</th><th>型號</th><th>品項</th><th>價格</th><th style="width: 200px"></th></tr>
@@ -35,13 +38,6 @@
     {% endfor %}
   </tbody>
 </table>
-<div class="container">
-  <div class="row">
-    <div class="col-sm-1 col-sm-offset-11">
-      <button class="btn btn-sm btn-success" data-role="go">開始</button>
-    </div>
-  </div>
-</div>
 
 <form style="display: none;" method="post" id="create_form">{% csrf_token %}
   <input type="hidden" name="manufacturer">

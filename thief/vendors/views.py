@@ -99,9 +99,12 @@ class import_item(ThiefRestAPI):
     def post(self, request):
         manufacturer = request.POST.get('manufacturer')
         model_id = request.POST.get('model_id')
-        catalog = Catalog.objects.filter(name=request.POST.get('catalog', '')).first()
         price = request.POST.get('price')
-        
+
+        catalog = Catalog.objects.filter(id=request.POST.get('catalog_id')).first()
+        if not catalog:
+            catalog = Catalog.objects.filter(name=request.POST.get('catalog', '')).first()
+
         if not catalog:
             return {'st': False, 'message': 'BAD_CATALOG'}
         if not model_id:

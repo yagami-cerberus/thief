@@ -35,8 +35,10 @@ $(function() {
                 } else if(!result.st && result.url && result.message) {
                     alert(MESSAGE[result.message]);
                     window.location = result.url;
+                } else if(!result.st && result.message) {
+                    alert(MESSAGE[result.message]);
                 } else {
-                    $st.text(result.error);
+                    alert('不明的錯誤');
                 }
             },
             error: function(xhr) {
