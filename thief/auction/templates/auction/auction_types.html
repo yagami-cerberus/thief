@@ -13,6 +13,9 @@
 </style>
 <h3>{{ cls.brand }} 類別代號管理</h3>
 <hr />
+<div class="container text-right">
+  <a href="{% url 'catalogs' %}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-arrow-left"></i> 返回品項清單</a>
+</div>
 <div class="container">
   <table class="table table-condensed">
     <thead>
@@ -52,6 +55,9 @@
       {% endfor %}
     <tbody>
   </table>
+</div>
+<div class="container text-right">
+  <a href="{% url 'catalogs' %}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-arrow-left"></i> 返回品項清單</a>
 </div>
 <form action="{% url 'delete_auction_type' type %}" method="POST" style="display: none" id="delete_form">
   {% csrf_token %}

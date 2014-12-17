@@ -22,6 +22,9 @@
 <h3>品項關鍵字管理 - {{ catalog.name }}</h3>
 <hr />
 <div class="container">
+  <div class="pull-right">
+    <a href="{% url 'catalogs' %}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-arrow-left"></i> 返回品項清單</a>
+  </div>
   {% include 'auction/_keyword_add.html' %}
 </div>
 <div class="container">
@@ -55,10 +58,14 @@
     <tbody>
   </table>
 </div>
+<div class="container text-right">
+  <a href="{% url 'catalogs' %}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-arrow-left"></i> 返回品項清單</a>
+</div>
 <form method="post" style="display: none" id="delete_form" action="">{% csrf_token %}
   <input type="hidden" name="id" value="" />
   <input type="hidden" name="__method__" value="delete" />
 </form>
+
 <script type="text/javascript">
 $(function() {
   $("a[data-delete-pk]").bind("click", function() {
